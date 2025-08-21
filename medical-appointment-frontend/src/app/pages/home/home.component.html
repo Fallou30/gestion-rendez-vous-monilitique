@@ -1,0 +1,168 @@
+<div class="home-container">
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <i class="fas fa-heartbeat"></i>
+        <span>MediCare</span>
+      </div>
+      
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="#" class="nav-link">Accueil</a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">Spécialités</a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">Médecins</a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">À propos</a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link">Contact</a>
+        </li>
+      </ul>
+      
+      <div class="nav-auth">
+        <button class="btn btn-outline" (click)="goToLogin()">
+          <i class="fas fa-sign-in-alt"></i>
+          Se connecter
+        </button>
+        <button class="btn btn-primary" (click)="goToRegister()">
+          <i class="fas fa-user-plus"></i>
+          S'inscrire
+        </button>
+      </div>
+      
+      <!-- Menu mobile -->
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1>Votre santé, notre priorité</h1>
+        <p>Prenez rendez-vous avec nos médecins qualifiés en quelques clics. 
+           Une plateforme moderne et sécurisée pour gérer vos consultations médicales.</p>
+        <div class="hero-buttons">
+          <button class="btn btn-primary btn-large" (click)="bookAppointment()">
+            <i class="fas fa-calendar-plus"></i>
+            Prendre rendez-vous
+          </button>
+          <button class="btn btn-outline btn-large" (click)="viewSpecialties()">
+            <i class="fas fa-stethoscope"></i>
+            Voir les spécialités
+          </button>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="hero-card">
+          <i class="fas fa-user-md"></i>
+          <h3>Consultation en ligne</h3>
+          <p>Disponible 24h/24</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <div class="section-header">
+        <h2>Pourquoi choisir MediCare ?</h2>
+        <p>Découvrez les avantages de notre plateforme de gestion de rendez-vous médicaux</p>
+      </div>
+      
+      <div class="features-grid">
+        <div class="feature-card" *ngFor="let feature of features">
+          <div class="feature-icon">
+            <i [class]="'fas fa-' + feature.icon"></i>
+          </div>
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item" *ngFor="let stat of stats">
+          <div class="stat-number">{{ stat.number }}</div>
+          <div class="stat-label">{{ stat.label }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2>Prêt à commencer ?</h2>
+        <p>Rejoignez des milliers de patients qui font confiance à MediCare pour leurs soins de santé</p>
+        <button class="btn btn-primary btn-large" (click)="goToRegister()">
+          <i class="fas fa-user-plus"></i>
+          Créer mon compte
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <div class="footer-brand">
+            <i class="fas fa-heartbeat"></i>
+            <span>MediCare</span>
+          </div>
+          <p>Votre plateforme de confiance pour la gestion de rendez-vous médicaux</p>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="#">Prise de rendez-vous</a></li>
+            <li><a href="#">Consultation en ligne</a></li>
+            <li><a href="#">Suivi médical</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Support</h4>
+          <ul>
+            <li><a href="#">Centre d'aide</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-section">
+          <h4>Suivez-nous</h4>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2024 MediCare. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+</div>

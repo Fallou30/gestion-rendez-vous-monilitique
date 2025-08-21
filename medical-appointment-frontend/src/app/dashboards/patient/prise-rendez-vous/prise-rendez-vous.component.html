@@ -1,0 +1,425 @@
+<!-- prise-rendez-vous.component.html -->
+<div class="rdv-container">
+  <!-- Header -->
+  <div class="rdv-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="fas fa-calendar-plus"></i>
+      </div>
+      <div class="header-text">
+        <h1>Prendre un Rendez-vous</h1>
+        <p>Planifiez votre consultation médicale en quelques étapes simples</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="(currentStep / totalSteps) * 100"></div>
+    </div>
+    <div class="progress-steps">
+      <div class="step" [class.active]="currentStep >= 1" [class.current]="currentStep === 1">
+        <div class="step-icon">
+          <i class="fas fa-hospital"></i>
+        </div>
+        <span>Établissement</span>
+      </div>
+      <div class="step" [class.active]="currentStep >= 2" [class.current]="currentStep === 2">
+        <div class="step-icon">
+          <i class="fas fa-user-md"></i>
+        </div>
+        <span>Médecin</span>
+      </div>
+      <div class="step" [class.active]="currentStep >= 3" [class.current]="currentStep === 3">
+        <div class="step-icon">
+          <i class="fas fa-calendar-day"></i>
+        </div>
+        <span>Date & Heure</span>
+      </div>
+      <div class="step" [class.active]="currentStep >= 4" [class.current]="currentStep === 4">
+        <div class="step-icon">
+          <i class="fas fa-file-medical"></i>
+        </div>
+        <span>Détails</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulaire -->
+  <form [formGroup]="rdvForm" (ngSubmit)="onSubmit()" class="rdv-form">
+    
+    <!-- Étape 1: Sélection de l'établissement et du service -->
+    <div class="form-step" [class.active]="currentStep === 1">
+      <div class="step-header">
+        <h2><i class="fas fa-hospital"></i> Choisissez votre établissement</h2>
+        <p>Sélectionnez l'hôpital et le service médical souhaité</p>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="hopital">
+            <i class="fas fa-hospital"></i>
+            Établissement de santé
+          </label>
+          <select 
+            id="hopital" 
+            formControlName="hopital" 
+            (change)="onHopitalChange()"
+            class="form-control"
+            [class.error]="rdvForm.get('hopital')?.invalid && rdvForm.get('hopital')?.touched">
+            <option value="">Sélectionnez un hôpital</option>
+            <option *ngFor="let hopital of hopitaux" [value]="hopital.idHopital">
+              {{ hopital.nom }} - {{ hopital.ville }}
+            </option>
+          </select>
+          <div class="error-message" *ngIf="rdvForm.get('hopital')?.invalid && rdvForm.get('hopital')?.touched">
+            Veuillez sélectionner un établissement
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="service">
+            <i class="fas fa-stethoscope"></i>
+            Service médical
+          </label>
+          <select 
+            id="service" 
+            formControlName="service" 
+            (change)="onServiceChange()"
+            class="form-control"
+            [class.error]="rdvForm.get('service')?.invalid && rdvForm.get('service')?.touched"
+            [disabled]="!selectedHopital || loadingServices">
+            <option value="">
+              {{ loadingServices ? 'Chargement...' : 'Sélectionnez un service' }}
+            </option>
+            <option *ngFor="let service of services" [value]="service.idService">
+              {{ service.nom }}
+            </option>
+          </select>
+          <div class="service-description" *ngIf="selectedService">
+            <i class="fas fa-info-circle"></i>
+            {{ selectedService.description }}
+          </div>
+          <div class="error-message" *ngIf="rdvForm.get('service')?.invalid && rdvForm.get('service')?.touched">
+            Veuillez sélectionner un service
+          </div>
+        </div>
+      </div>
+
+      <div class="hospital-info" *ngIf="selectedHopital">
+        <div class="info-card">
+          <i class="fas fa-map-marker-alt"></i>
+          <div>
+            <h3>{{ selectedHopital.nom }}</h3>
+            <p>{{ selectedHopital.adresse }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          [disabled]="!isStepValid(1)"
+          (click)="nextStep()">
+          Suivant
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Étape 2: Sélection du médecin -->
+    <div class="form-step" [class.active]="currentStep === 2">
+      <div class="step-header">
+        <h2><i class="fas fa-user-md"></i> Choisissez votre médecin</h2>
+        <p>Sélectionnez le praticien qui vous suivra</p>
+      </div>
+
+      <div class="form-group">
+        <label for="medecin">
+          <i class="fas fa-user-md"></i>
+          Médecin
+        </label>
+        <select 
+          id="medecin" 
+          formControlName="medecin" 
+          (change)="onMedecinChange()"
+          class="form-control"
+          [class.error]="rdvForm.get('medecin')?.invalid && rdvForm.get('medecin')?.touched"
+          [disabled]="!selectedService || loadingMedecins">
+          <option value="">
+            {{ loadingMedecins ? 'Chargement...' : 'Sélectionnez un médecin' }}
+          </option>
+          <option *ngFor="let medecin of medecins" [value]="medecin.id">
+            Dr {{ medecin.prenom }} {{ medecin.nom }} - {{ medecin.specialite }}
+          </option>
+        </select>
+        <div class="error-message" *ngIf="rdvForm.get('medecin')?.invalid && rdvForm.get('medecin')?.touched">
+          Veuillez sélectionner un médecin
+        </div>
+      </div>
+
+      <div class="medecin-info" *ngIf="selectedMedecin">
+        <div class="info-card">
+          <div class="medecin-avatar">
+            <i class="fas fa-user-md"></i>
+          </div>
+          <div>
+            <h3>Dr {{ selectedMedecin.prenom }} {{ selectedMedecin.nom }}</h3>
+            <p><i class="fas fa-stethoscope"></i> {{ selectedMedecin.specialite }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="prevStep()">
+          <i class="fas fa-arrow-left"></i>
+          Précédent
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          [disabled]="!isStepValid(2)"
+          (click)="nextStep()">
+          Suivant
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Étape 3: Sélection de la date et de l'heure -->
+    <div class="form-step" [class.active]="currentStep === 3">
+      <div class="step-header">
+        <h2><i class="fas fa-calendar-day"></i> Choisissez la date et l'heure</h2>
+        <p>Sélectionnez un créneau disponible</p>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="date">
+            <i class="fas fa-calendar-alt"></i>
+            Date souhaitée
+          </label>
+          <input 
+            type="date" 
+            id="date" 
+            formControlName="date" 
+            (change)="onDateChange()"
+            class="form-control"
+            [class.error]="rdvForm.get('date')?.invalid && rdvForm.get('date')?.touched"
+            [min]="getMinDate()"
+            [max]="getMaxDate()"
+            [disabled]="!selectedMedecin">
+          <div class="error-message" *ngIf="rdvForm.get('date')?.invalid && rdvForm.get('date')?.touched">
+            Veuillez sélectionner une date
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="creneau">
+            <i class="fas fa-clock"></i>
+            Créneau horaire
+          </label>
+          <select 
+            id="creneau" 
+            formControlName="creneau" 
+            (change)="onCreneauChange()"
+            class="form-control"
+            [class.error]="rdvForm.get('creneau')?.invalid && rdvForm.get('creneau')?.touched"
+            [disabled]="!selectedDate || loadingCreneaux">
+            <option value="">
+              {{ loadingCreneaux ? 'Chargement...' : 'Sélectionnez un créneau' }}
+            </option>
+            <option *ngFor="let creneau of creneauxDisponibles" [value]="creneau.idPlanning">
+              {{ creneau.heureDebut }} - {{ creneau.heureFin }}
+            </option>
+          </select>
+          <div class="error-message" *ngIf="rdvForm.get('creneau')?.invalid && rdvForm.get('creneau')?.touched">
+            Veuillez sélectionner un créneau
+          </div>
+        </div>
+      </div>
+
+      <div class="creneaux-grid" *ngIf="creneauxDisponibles.length > 0 && !loadingCreneaux">
+        <div class="creneau-card" 
+             *ngFor="let creneau of creneauxDisponibles"
+             [class.selected]="selectedCreneau?.idPlanning === creneau.idPlanning"
+             (click)="rdvForm.patchValue({creneau: creneau.idPlanning}); onCreneauChange()">
+          <div class="creneau-time">
+            <i class="fas fa-clock"></i>
+            {{ creneau.heureDebut }} - {{ creneau.heureFin }}
+          </div>
+          <div class="creneau-info">
+            <span class="available-badge">
+              <i class="fas fa-check-circle"></i>
+              Disponible
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-creneaux" *ngIf="creneauxDisponibles.length === 0 && !loadingCreneaux && selectedDate">
+        <i class="fas fa-calendar-times"></i>
+        <h3>Aucun créneau disponible</h3>
+        <p>Aucun créneau libre n'est disponible pour cette date. Veuillez choisir une autre date.</p>
+      </div>
+
+      <div class="loading-creneaux" *ngIf="loadingCreneaux">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Recherche des créneaux disponibles...</p>
+      </div>
+
+      <div class="step-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="prevStep()">
+          <i class="fas fa-arrow-left"></i>
+          Précédent
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          [disabled]="!isStepValid(3)"
+          (click)="nextStep()">
+          Suivant
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Étape 4: Détails de la consultation -->
+    <div class="form-step" [class.active]="currentStep === 4">
+      <div class="step-header">
+        <h2><i class="fas fa-file-medical"></i> Détails de la consultation</h2>
+        <p>Précisez le type de consultation et le motif</p>
+      </div>
+
+      <div class="form-group">
+        <label for="typeConsultation">
+          <i class="fas fa-stethoscope"></i>
+          Type de consultation
+        </label>
+        <div class="consultation-types">
+          <div class="consultation-type" 
+               *ngFor="let type of typesConsultation"
+               [class.selected]="rdvForm.get('typeConsultation')?.value === type.value"
+               (click)="rdvForm.patchValue({typeConsultation: type.value})">
+            <div class="type-icon">
+              <i class="fas" [class]="'fa-' + type.icon"></i>
+            </div>
+            <div class="type-info">
+              <h4>{{ type.label }}</h4>
+              <span class="duration">{{ type.duree }} min</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="motif">
+          <i class="fas fa-comment-medical"></i>
+          Motif de la consultation
+        </label>
+        <textarea 
+          id="motif" 
+          formControlName="motif" 
+          class="form-control"
+          [class.error]="rdvForm.get('motif')?.invalid && rdvForm.get('motif')?.touched"
+          placeholder="Décrivez brièvement le motif de votre consultation..."
+          rows="4"
+          maxlength="500">
+        </textarea>
+        <div class="char-counter">
+          {{ rdvForm.get('motif')?.value?.length || 0 }}/500 caractères
+        </div>
+        <div class="error-message" *ngIf="rdvForm.get('motif')?.invalid && rdvForm.get('motif')?.touched">
+          <span *ngIf="rdvForm.get('motif')?.errors?.['required']">Le motif est requis</span>
+          <span *ngIf="rdvForm.get('motif')?.errors?.['minlength']">Le motif doit contenir au moins 10 caractères</span>
+          <span *ngIf="rdvForm.get('motif')?.errors?.['maxlength']">Le motif ne peut pas dépasser 500 caractères</span>
+        </div>
+      </div>
+
+      <!-- Récapitulatif -->
+      <div class="recap-section">
+        <h3><i class="fas fa-clipboard-check"></i> Récapitulatif</h3>
+        <div class="recap-card">
+          <div class="recap-item">
+            <i class="fas fa-hospital"></i>
+            <span>{{ selectedHopital?.nom }}</span>
+          </div>
+          <div class="recap-item">
+            <i class="fas fa-stethoscope"></i>
+            <span>{{ selectedService?.nom }}</span>
+          </div>
+          <div class="recap-item">
+            <i class="fas fa-user-md"></i>
+            <span>Dr {{ selectedMedecin?.prenom }} {{ selectedMedecin?.nom }}</span>
+          </div>
+          <div class="recap-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>{{ selectedDate | date:'fullDate':'fr' }}</span>
+          </div>
+          <div class="recap-item">
+            <i class="fas fa-clock"></i>
+            <span>{{ selectedCreneau?.heureDebut }} - {{ selectedCreneau?.heureFin }}</span>
+            <!-- Suite du template HTML -->
+          </div>
+          <div class="recap-item">
+            <i class="fas fa-medical-bag"></i>
+            <span>{{ getTypeConsultationInfo(rdvForm.get('typeConsultation')?.value)?.label }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="prevStep()">
+          <i class="fas fa-arrow-left"></i>
+          Précédent
+        </button>
+        <button 
+          type="submit" 
+          class="btn btn-success" 
+          [disabled]="!isStepValid(4) || submitting">
+          <i class="fas fa-check" *ngIf="!submitting"></i>
+          <i class="fas fa-spinner fa-spin" *ngIf="submitting"></i>
+          {{ submitting ? 'Confirmation...' : 'Confirmer le rendez-vous' }}
+        </button>
+      </div>
+    </div>
+
+  </form>
+
+  <!-- Messages de succès/erreur -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    <i class="fas fa-check-circle"></i>
+    {{ successMessage }}
+  </div>
+
+  <div class="alert alert-error" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-circle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Navigation rapide -->
+  <div class="quick-nav" *ngIf="currentStep > 1">
+    <button 
+      type="button" 
+      class="nav-step" 
+      *ngFor="let step of [1, 2, 3, 4]; let i = index"
+      [class.active]="currentStep === step"
+      [class.completed]="currentStep > step"
+      [disabled]="currentStep < step"
+      (click)="goToStep(step)">
+      {{ step }}
+    </button>
+  </div>
+</div>
+                

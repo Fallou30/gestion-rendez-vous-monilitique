@@ -1,0 +1,297 @@
+<div class="registration-container">
+  <div class="registration-card">
+    <div class="registration-header">
+      <h1><i class="fa-solid fa-user-plus icon-title"></i> Inscription Patient</h1>
+      <p>Créez votre compte pour prendre rendez-vous</p>
+    </div>
+
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="registration-form">
+      <fieldset class="form-section">
+        <legend class="section-title">
+          <i class="fa-solid fa-circle-info icon-legend"></i> Informations personnelles
+        </legend>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="nom"><i class="fa-solid fa-user icon-field"></i> Nom *</label>
+            <input 
+              id="nom"
+              type="text"
+              formControlName="nom"
+              placeholder="Votre nom"
+              [class.input-error]="registrationForm.get('nom')?.invalid && registrationForm.get('nom')?.touched"
+            />
+            <div *ngIf="registrationForm.get('nom')?.errors?.['required'] && registrationForm.get('nom')?.touched" 
+                 class="error-message">
+              <i class="fa-solid fa-circle-exclamation icon-error"></i> Le nom est requis
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="prenom"><i class="fa-solid fa-user icon-field"></i> Prénom *</label>
+            <input 
+              id="prenom"
+              type="text"
+              formControlName="prenom"
+              placeholder="Votre prénom"
+              [class.input-error]="registrationForm.get('prenom')?.invalid && registrationForm.get('prenom')?.touched"
+            />
+            <div *ngIf="registrationForm.get('prenom')?.errors?.['required'] && registrationForm.get('prenom')?.touched" 
+                 class="error-message">
+              <i class="fa-solid fa-circle-exclamation icon-error"></i> Le prénom est requis
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="dateNaissance"><i class="fa-solid fa-calendar-days icon-field"></i> Date de naissance</label>
+            <input 
+              id="dateNaissance"
+              type="date"
+              formControlName="dateNaissance"
+              [max]="getMaxBirthDate()"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="sexe"><i class="fa-solid fa-venus-mars icon-field"></i> Sexe</label>
+            <select id="sexe" formControlName="sexe">
+              <option value="">Sélectionner</option>
+              <option value="MASCULIN">Masculin</option>
+              <option value="FEMININ">Féminin</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="lieuNaissance"><i class="fa-solid fa-location-dot icon-field"></i> Lieu de naissance</label>
+            <input 
+              id="lieuNaissance"
+              type="text"
+              formControlName="lieuNaissance"
+              placeholder="Ville de naissance"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="telephone"><i class="fa-solid fa-phone icon-field"></i> Téléphone</label>
+            <input 
+              id="telephone"
+              type="tel"
+              formControlName="telephone"
+              placeholder="06 12 34 56 78"
+              [class.input-error]="registrationForm.get('telephone')?.invalid && registrationForm.get('telephone')?.touched"
+            />
+            <div *ngIf="registrationForm.get('telephone')?.errors?.['pattern'] && registrationForm.get('telephone')?.touched" 
+                 class="error-message">
+              <i class="fa-solid fa-circle-exclamation icon-error"></i> Format invalide (10 chiffres requis)
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="adresse"><i class="fa-solid fa-address-card icon-field"></i> Adresse</label>
+          <textarea 
+            id="adresse"
+            formControlName="adresse"
+            rows="3"
+            placeholder="Votre adresse complète"
+          ></textarea>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend class="section-title">
+          <i class="fa-solid fa-lock icon-legend"></i> Informations de connexion
+        </legend>
+        
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="email"><i class="fa-solid fa-envelope icon-field"></i> Email *</label>
+            <input 
+              id="email"
+              type="email"
+              formControlName="email"
+              (blur)="checkEmailAvailability()"
+              placeholder="votre@email.com"
+              [class.input-error]="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched"
+            />
+            <div *ngIf="registrationForm.get('email')?.errors?.['required'] && registrationForm.get('email')?.touched" 
+                 class="error-message">
+              <i class="fa-solid fa-circle-exclamation icon-error"></i> L'email est requis
+            </div>
+            <div *ngIf="registrationForm.get('email')?.errors?.['email'] && registrationForm.get('email')?.touched" 
+                 class="error-message">
+              <i class="fa-solid fa-circle-exclamation icon-error"></i> Format d'email invalide
+            </div>
+            <div *ngIf="!emailAvailable && registrationForm.get('email')?.valid && registrationForm.get('email')?.touched" 
+                 class="error-message">
+              <i class="fa-solid fa-times-circle icon-error"></i> Cet email est déjà utilisé
+            </div>
+            <div *ngIf="emailAvailable && registrationForm.get('email')?.valid && registrationForm.get('email')?.touched" 
+                 class="success-message">
+              <i class="fa-solid fa-check-circle icon-success"></i> Email disponible
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="motDePasse"><i class="fa-solid fa-key icon-field"></i> Mot de passe *</label>
+            <div class="password-input">
+              <input 
+                id="motDePasse"
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="motDePasse"
+                placeholder="Votre mot de passe"
+                [class.input-error]="registrationForm.get('motDePasse')?.invalid && registrationForm.get('motDePasse')?.touched"
+              />
+              <button type="button" (click)="togglePasswordVisibility()" class="toggle-password">
+                <i [class]="showPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye'"></i>
+              </button>
+            </div>
+            <div *ngIf="registrationForm.get('motDePasse')?.errors?.['required'] && registrationForm.get('motDePasse')?.touched" 
+                 class="error-message">
+              <i class="fa-solid fa-circle-exclamation icon-error"></i> Le mot de passe est requis
+            </div>
+            <div *ngIf="registrationForm.get('motDePasse')?.errors?.['minlength'] && registrationForm.get('motDePasse')?.touched" 
+                 class="error-message">
+              <i class="fa-solid fa-circle-exclamation icon-error"></i> Minimum 8 caractères
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmerMotDePasse"><i class="fa-solid fa-key icon-field"></i> Confirmation *</label>
+            <div class="password-input">
+              <input 
+                id="confirmerMotDePasse"
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="confirmationMotDePasse"
+                placeholder="Confirmez votre mot de passe"
+                [class.input-error]="registrationForm.get('confirmationMotDePasse')?.invalid && registrationForm.get('confirmationMotDePasse')?.touched"
+              />
+              <button type="button" (click)="togglePasswordVisibility()" class="toggle-password">
+                <i [class]="showPassword ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye'"></i>
+              </button>
+            </div>
+            <div *ngIf="registrationForm.get('confirmationMotDePassee')?.errors?.['required'] && registrationForm.get('confirmerMotDePasse')?.touched" 
+                 class="error-message">
+              <i class="fa-solid fa-circle-exclamation icon-error"></i> La confirmation est requise
+            </div>
+            <div *ngIf="registrationForm.errors?.['passwordMismatch'] && registrationForm.get('confirmationMotDePasse')?.touched" 
+                 class="error-message">
+              <i class="fa-solid fa-circle-exclamation icon-error"></i> Les mots de passe ne correspondent pas
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend class="section-title">
+          <i class="fa-solid fa-heart-pulse icon-legend"></i> Informations médicales
+        </legend>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="numAssurance"><i class="fa-solid fa-hospital-user icon-field"></i> Numéro d'assurance</label>
+            <input 
+              id="numAssurance"
+              type="text"
+              formControlName="numAssurance"
+              placeholder="Numéro d'assurance maladie"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="groupeSanguin"><i class="fa-solid fa-droplet icon-field"></i> Groupe sanguin</label>
+            <select id="groupeSanguin" formControlName="groupeSanguin">
+              <option value="">Sélectionner</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="profession"><i class="fa-solid fa-briefcase icon-field"></i> Profession</label>
+            <input 
+              id="profession"
+              type="text"
+              formControlName="profession"
+              placeholder="Votre profession"
+            />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="allergies"><i class="fa-solid fa-triangle-exclamation icon-field"></i> Allergies</label>
+            <textarea 
+              id="allergies"
+              formControlName="allergies"
+              rows="3"
+              placeholder="Mentionnez vos allergies connues"
+            ></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend class="section-title">
+          <i class="fa-solid fa-hand-holding-medical icon-legend"></i> Contact d'urgence
+        </legend>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="contactUrgenceNom"><i class="fa-solid fa-user-injured icon-field"></i> Nom du contact</label>
+            <input 
+              id="contactUrgenceNom"
+              type="text"
+              formControlName="contactUrgenceNom"
+              placeholder="Nom de la personne à contacter"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="contactUrgenceTelephone"><i class="fa-solid fa-phone-volume icon-field"></i> Téléphone *</label>
+            <input 
+              id="contactUrgenceTelephone"
+              type="tel"
+              formControlName="contactUrgenceTelephone"
+              placeholder="06 12 34 56 78"
+              [class.input-error]="registrationForm.get('contactUrgenceTelephone')?.invalid && registrationForm.get('contactUrgenceTelephone')?.touched"
+            />
+            <div *ngIf="registrationForm.get('contactUrgenceTelephone')?.errors?.['pattern'] && registrationForm.get('contactUrgenceTelephone')?.touched" 
+                 class="error-message">
+              <i class="fa-solid fa-circle-exclamation icon-error"></i> Format invalide (10 chiffres requis)
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <div *ngIf="errorMessage" class="error-message global-error">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="button"
+          (click)="goBack()"
+          class="secondary-button"
+        >
+          <i class="fa-solid fa-arrow-left"></i> Retour
+        </button>
+        
+        <button 
+          type="submit"
+          [disabled]="registrationForm.invalid || isLoading || !emailAvailable"
+          class="primary-button"
+        >
+          <span *ngIf="isLoading" class="spinner"></span>
+          <i *ngIf="!isLoading" class="fa-solid fa-user-plus"></i>
+          {{ isLoading ? 'Inscription en cours...' : 'S\'inscrire' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

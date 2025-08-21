@@ -1,0 +1,220 @@
+ <div class="dossier-medical-container">
+      <div class="dossier-header">
+        <h3><i class="fas fa-folder-medical"></i> Dossier Médical</h3>
+        <div class="dossier-actions">
+          <button type="button" (click)="toggleEditMode()" class="btn btn-outline-primary">
+            <i class="fas fa-edit"></i> {{ isEditing ? 'Annuler' : 'Modifier' }}
+          </button>
+          <button type="button" (click)="sauvegarderDossier()" 
+                  class="btn btn-success" 
+                  [disabled]="!isEditing || !dossierForm.valid">
+            <i class="fas fa-save"></i> Sauvegarder
+          </button>
+        </div>
+      </div>
+
+      <div class="dossier-content" *ngIf="dossierMedical">
+        <form [formGroup]="dossierForm" class="dossier-form">
+          
+          <!-- Antécédents médicaux -->
+          <div class="form-section">
+            <h4><i class="fas fa-history"></i> Antécédents médicaux</h4>
+            <div class="form-group">
+              <label for="antecedentsMedicaux">Antécédents personnels</label>
+              <textarea
+                id="antecedentsMedicaux"
+                formControlName="antecedentsMedicaux"
+                rows="4"
+                [readonly]="!isEditing"
+                class="form-control"
+                placeholder="Décrivez les antécédents médicaux du patient...">
+              </textarea>
+            </div>
+          </div>
+
+          <!-- Antécédents familiaux -->
+          <div class="form-section">
+            <h4><i class="fas fa-users"></i> Antécédents familiaux</h4>
+            <div class="form-group">
+              <label for="antecedentsFamiliaux">Antécédents familiaux</label>
+              <textarea
+                id="antecedentsFamiliaux"
+                formControlName="antecedentsFamiliaux"
+                rows="3"
+                [readonly]="!isEditing"
+                class="form-control"
+                placeholder="Décrivez les antécédents familiaux...">
+              </textarea>
+            </div>
+          </div>
+
+          <!-- Vaccinations -->
+          <div class="form-section">
+            <h4><i class="fas fa-syringe"></i> Vaccinations</h4>
+            <div class="form-group">
+              <label for="vaccinations">Historique des vaccinations</label>
+              <textarea
+                id="vaccinations"
+                formControlName="vaccinations"
+                rows="3"
+                [readonly]="!isEditing"
+                class="form-control"
+                placeholder="Listez les vaccinations effectuées...">
+              </textarea>
+            </div>
+          </div>
+
+          <!-- Notes générales -->
+          <div class="form-section">
+            <h4><i class="fas fa-sticky-note"></i> Notes générales</h4>
+            <div class="form-group">
+              <label for="notesGenerales">Notes et observations</label>
+              <textarea
+                id="notesGenerales"
+                formControlName="notesGenerales"
+                rows="4"
+                [readonly]="!isEditing"
+                class="form-control"
+                placeholder="Notes générales sur le patient...">
+              </textarea>
+            </div>
+          </div>
+        </form>
+
+        <!-- Historique des consultations -->
+        <div class="historique-section">
+          <h4><i class="fas fa-calendar-alt"></i> Historique des consultations</h4>
+          <div class="consultations-list" *ngIf="historiqueConsultations.length > 0">
+            <div class="consultation-item" *ngFor="let consultation of historiqueConsultations">
+              <div class="consultation-header">
+                <span class="consultation-date">{{ formatDate(consultation.dateConsultation) }}</span>
+                <span class="consultation-statut" [class]="'statut-' + consultation.statut">
+                  {{ consultation.statut }}
+                </span>
+              </div>
+              <div class="consultation-content">
+                <div class="consultation-field" *ngIf="consultation.symptomes">
+                  <strong>Symptômes:</strong> {{ consultation.symptomes }}
+                </div>
+                <div class="consultation-field" *ngIf="consultation.diagnostic">
+                  <strong>Diagnostic:</strong> {{ consultation.diagnostic }}
+                </div>
+                <div class="consultation-field" *ngIf="consultation.observations">
+                  <strong>Observations:</strong> {{ consultation.observations }}
+                </div>
+                <div class="consultation-field" *ngIf="consultation.recommandations">
+                  <strong>Recommandations:</strong> {{ consultation.recommandations }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="no-consultations" *ngIf="historiqueConsultations.length === 0">
+            <p><i class="fas fa-info-circle"></i> Aucune consultation enregistrée</p>
+          </div>
+        </div>
+
+        <!-- Documents médicaux -->
+        <div class="documents-section">
+          <h4><i class="fas fa-file-medical"></i> Documents médicaux</h4>
+          <div class="documents-actions">
+            <input type="file" #fileInput (change)="onFileSelected($event)" 
+                   accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;">
+            <button type="button" (click)="fileInput.click()" class="btn btn-outline-primary">
+              <i class="fas fa-upload"></i> Ajouter document
+            </button>
+          </div>
+          
+         <div class="documents-list" *ngIf="documentsMedicaux.length > 0">
+        <div class="document-item" *ngFor="let document of documentsMedicaux">
+            <div class="document-info">
+            <i [class]="getDocumentIcon(document.typeDocument)"></i>
+            <div class="document-details">
+                <span class="document-name">{{ document.nomFichier }}</span>
+                <span class="document-type">{{ document.typeDocument }}</span>
+                <span class="document-size">{{ formatFileSize(document.tailleFichier) }}</span>
+                <span class="document-date">{{ formatDate(document.dateAjout) }}</span>
+            </div>
+            </div>
+            <div class="document-actions">
+            <button type="button" (click)="telechargerDocument(document)" 
+                    class="btn btn-sm btn-outline-primary"
+                    title="Télécharger">
+                <i class="fas fa-download"></i>
+            </button>
+            <button type="button" (click)="previsualiserDocument(document)"
+                    class="btn btn-sm btn-outline-secondary"
+                    title="Prévisualiser">
+                <i class="fas fa-eye"></i>
+            </button>
+            </div>
+        </div>
+        </div>
+
+        <!-- Informations du dossier -->
+        <div class="dossier-info">
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Date de création:</label>
+              <span>{{ formatDate(dossierMedical.dateCreation) }}</span>
+            </div>
+            <div class="info-item">
+              <label>Dernière modification:</label>
+              <span>{{ formatDate(dossierMedical.dateModification) }}</span>
+            </div>
+            <div class="info-item">
+              <label>Statut:</label>
+              <span [class]="dossierMedical.archive ? 'statut-archive' : 'statut-actif'">
+                {{ dossierMedical.archive ? 'Archivé' : 'Actif' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal pour ajouter un document -->
+      <div class="modal" *ngIf="showDocumentModal" (click)="closeDocumentModal()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h4>Ajouter un document</h4>
+            <button type="button" (click)="closeDocumentModal()" class="close-btn">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="documentForm" class="document-form">
+              <div class="form-group">
+                <label for="typeDocument">Type de document *</label>
+                <select id="typeDocument" formControlName="typeDocument" class="form-control">
+                  <option value="">Sélectionner un type</option>
+                  <option value="ORDONNANCE">Ordonnance</option>
+                  <option value="EXAMEN">Résultat d'examen</option>
+                  <option value="RAPPORT">Rapport médical</option>
+                  <option value="CERTIFICAT">Certificat médical</option>
+                  <option value="AUTRE">Autre</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" formControlName="description" 
+                         rows="3" class="form-control"
+                         placeholder="Description du document..."></textarea>
+              </div>
+              <div class="selected-file" *ngIf="selectedFile">
+                <p><strong>Fichier sélectionné:</strong> {{ selectedFile.name }}</p>
+                <p><strong>Taille:</strong> {{ formatFileSize(selectedFile.size) }}</p>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" (click)="closeDocumentModal()" class="btn btn-secondary">
+              Annuler
+            </button>
+            <button type="button" (click)="ajouterDocument()" 
+                    class="btn btn-primary" 
+                    [disabled]="!documentForm.valid || !selectedFile">
+              Ajouter
+            </button>
+          </div>
+        </div>
+      </div>
+ </div>

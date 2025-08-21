@@ -1,0 +1,128 @@
+# application.yml
+server:
+  port: 8081
+  servlet:
+    context-path: /api/v1
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sante_senegal_db
+    username: postgres
+    password: tall
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ndiayeamidou23@gmail.com
+    password: aixa hmfc tpry pcyu
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    protocol: smtp
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+
+
+
+
+# File Upload
+file:
+  upload-dir: ./uploads/documents
+
+
+
+
+# Notification Settings
+notification:
+  email:
+    enabled: true
+    smtp:
+      host: ${SMTP_HOST:smtp.gmail.com}
+      port: 587
+      username: ${SMTP_USERNAME}
+      password: ${SMTP_PASSWORD}
+  sms:
+    enabled: true
+    provider: ${SMS_PROVIDER:twilio}
+    api-key: ${SMS_API_KEY}
+
+# Logging
+logging:
+  level:
+    com.sante.senegal: DEBUG
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
+    max-size: 10MB
+    max-history: 30
+
+# Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+debug: true
+# Configuration pour Date Nager (API gratuite)
+calendrier:
+  date-nager:
+    base-url: https://date.nager.at/api/v3
+    country-code: SN  # Sénégal
+    enabled: true
+
+  # Configuration des jours fériés
+  jours-feries:
+    auto-sync: true
+    sync-cron: "0 0 2 1 1 *"  # Tous les 1er janvier à 2h
+    affect-disponibilites: true
+    use-fallback-data: true  # Utiliser les données par défaut si l'API échoue
+
+  # Configuration des tâches de nettoyage
+  nettoyage:
+    enabled: true
+    cron: "0 0 3 1 1 *"  # Tous les 1er janvier à 3h
+    conserver-annees: 2  # Conserver les données des 2 dernières années
+
+# Configuration des tâches planifiées
+
+  task:
+    scheduling:
+      enabled: true
+      pool:
+        size: 2
+
+# Configuration RestTemplate
+rest:
+  template:
+    connection-timeout: 5000
+    read-timeout: 10000
+
+
+# Configuration des logs
+
+#Configuration dans application.properties

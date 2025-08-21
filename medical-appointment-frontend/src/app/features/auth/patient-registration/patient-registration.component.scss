@@ -1,0 +1,327 @@
+/* Variables pour les couleurs et espacements */
+$primary-color: #4CAF50; // Vert apaisant
+$secondary-color: #607D8B; // Gris ardoise pour les actions secondaires
+$text-color: #333;
+$light-text-color: #666;
+$border-color: #ddd;
+$error-color: #f44336; // Rouge vif pour les erreurs
+$success-color: #28a745; // Vert pour les succès
+$background-color: #f9f9f9; // Arrière-plan doux
+$card-background: #fff;
+$shadow: 0 4px 15px rgba(0, 0, 0, 0.08); // Ombre plus douce
+$border-radius: 8px;
+$padding-base: 1.5rem;
+$spacing-sm: 0.75rem;
+$spacing-md: 1rem;
+$spacing-lg: 2rem;
+
+.registration-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alignement en haut pour les grands formulaires */
+  min-height: 100vh;
+  padding: $spacing-lg;
+  background-color: $background-color;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box; /* S'assurer que le padding est inclus dans la taille */
+}
+
+.registration-card {
+  background-color: $card-background;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  padding: $spacing-lg;
+  width: 100%;
+  max-width: 900px; /* Taille maximale plus grande pour un formulaire complet */
+  margin: auto; /* Centrage automatique pour les petits écrans */
+
+  @media (max-width: 768px) {
+    padding: $padding-base;
+  }
+}
+
+.registration-header {
+  text-align: center;
+  margin-bottom: $spacing-lg;
+
+  h1 {
+    color: $primary-color;
+    font-size: 2.2rem;
+    margin-bottom: $spacing-sm / 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .icon-title {
+      font-size: 2rem;
+      margin-right: 0.8rem;
+      color: $secondary-color; // Couleur pour l'icône de titre
+    }
+  }
+
+  p {
+    color: $light-text-color;
+    font-size: 1rem;
+  }
+}
+
+.registration-form {
+  .form-section {
+    border: 1px solid $border-color;
+    border-radius: $border-radius - 2px;
+    padding: $padding-base;
+    margin-bottom: $spacing-lg; // Espacement entre les sections
+    position: relative; // Nécessaire pour positionner la légende
+
+    .section-title {
+      position: absolute;
+      top: -1.2em; // Ajustez si nécessaire pour un bon alignement
+      left: $padding-base;
+      background-color: $card-background; // Fond pour que le texte de la légende ne soit pas traversé par la bordure
+      padding: 0 $spacing-sm;
+      color: $primary-color;
+      font-size: 1.15rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+
+      .icon-legend {
+        margin-right: 0.5rem;
+        color: $secondary-color;
+      }
+    }
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); // Colonnes flexibles
+    gap: $padding-base; // Espacement entre les champs
+  }
+
+  .form-group {
+    margin-bottom: $spacing-sm; // Réduit la marge pour les groupes dans la grille
+
+    &.full-width {
+      grid-column: 1 / -1; // Prend toute la largeur dans la grille
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: $text-color;
+      font-weight: 500;
+      font-size: 0.95rem;
+
+      .icon-field {
+        margin-right: 0.5rem;
+        color: $light-text-color;
+      }
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.8rem $spacing-sm;
+      border: 1px solid $border-color;
+      border-radius: 4px;
+      font-size: 1rem;
+      color: $text-color;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      box-sizing: border-box; // Important pour la largeur
+
+      &:focus {
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba($primary-color, 0.2);
+        outline: none;
+      }
+
+      &.input-error {
+        border-color: $error-color;
+        &:focus {
+          box-shadow: 0 0 0 3px rgba($error-color, 0.2);
+        }
+      }
+    }
+
+    select {
+      // Ajustements pour les selects qui peuvent parfois avoir un rendu différent
+      appearance: none; // Supprime l'apparence par défaut du système
+      background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.4l-118%20118.2L18.4%2074.9A17.6%2017.6%200%200%200%205.4%2061.8c-7.8-7.8-20.5-7.8-28.3%200-7.8%207.8-7.8%2020.5%200%2028.3l133%20133c7.8%207.8%2020.5%207.8%2028.3%200l133-133a20%2020%200%200%200%200-28.3c-7.8-7.7-20.6-7.7-28.4%200z%22%2F%3E%3C%2Fsvg%3E');
+      background-repeat: no-repeat;
+      background-position: right 0.7rem top 50%;
+      background-size: 0.65rem auto;
+      padding-right: 2rem; /* Espace pour la flèche */
+    }
+
+    textarea {
+      resize: vertical; // Permet uniquement le redimensionnement vertical
+      min-height: 80px;
+    }
+  }
+}
+
+.password-input {
+  position: relative;
+  width: 100%;
+
+  input {
+    padding-right: 2.8rem; // Espace pour le bouton d'œil
+  }
+
+  .toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $light-text-color;
+    font-size: 1.1rem;
+    padding: 0; // Supprime le padding par défaut du bouton
+    z-index: 2; // S'assure que le bouton est au-dessus de l'input
+
+    &:hover {
+      color: $text-color;
+    }
+  }
+}
+
+.error-message {
+  color: $error-color;
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
+
+  .icon-error {
+    margin-right: 0.4rem;
+  }
+
+  &.global-error {
+    text-align: center;
+    margin-top: $spacing-md;
+    padding: $spacing-sm;
+    background-color: lighten($error-color, 40%);
+    border-radius: 4px;
+    border: 1px solid $error-color;
+  }
+}
+
+.success-message {
+  color: $success-color;
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
+
+  .icon-success {
+    margin-right: 0.4rem;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  margin-top: $spacing-lg;
+
+  button {
+    padding: 0.8rem 1.8rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      margin-right: 0.6rem;
+    }
+
+    &.primary-button {
+      background-color: $primary-color;
+      color: #fff;
+      border: 1px solid $primary-color;
+
+      &:hover:not(:disabled) {
+        background-color: darken($primary-color, 10%);
+        border-color: darken($primary-color, 10%);
+        box-shadow: 0 4px 10px rgba($primary-color, 0.3);
+      }
+
+      &:disabled {
+        background-color: lighten($primary-color, 20%);
+        border-color: lighten($primary-color, 20%);
+        cursor: not-allowed;
+      }
+    }
+
+    &.secondary-button {
+      background-color: #f0f0f0;
+      color: $secondary-color;
+      border: 1px solid $secondary-color;
+
+      &:hover:not(:disabled) {
+        background-color: darken(#f0f0f0, 5%);
+        color: darken($secondary-color, 10%);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+}
+
+/* Spinner pour le chargement */
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  width: 1em;
+  height: 1em;
+  animation: spin 1s linear infinite;
+  margin-right: 0.6em;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Media queries pour la responsivité
+@media (max-width: 600px) {
+  .registration-card {
+    border-radius: 0; // Pleine largeur sur les très petits écrans
+    box-shadow: none;
+    max-width: none;
+  }
+
+  .registration-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr; // Une seule colonne sur mobile
+  }
+
+  .form-group.full-width {
+    grid-column: auto; // Réinitialise la largeur complète
+  }
+
+  .form-actions {
+    flex-direction: column-reverse; // Boutons empilés, retour en haut
+    gap: $spacing-sm;
+
+    button {
+      width: 100%;
+      i {
+        margin-right: 0.8rem; // Ajuste la marge pour les icônes
+      }
+    }
+  }
+}

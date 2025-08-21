@@ -1,0 +1,413 @@
+<!-- components/hopital-form/hopital-form.component.html -->
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10 col-lg-8 mx-auto">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h3 class="mb-0">
+            <i class="fas fa-hospital me-2"></i>
+            {{ isEditMode ? 'Modifier l\'hôpital' : 'Ajouter un nouvel hôpital' }}
+          </h3>
+        </div>
+        
+        <div class="card-body">
+          <form [formGroup]="hopitalForm" (ngSubmit)="onSubmit()" novalidate autocomplete="off">
+            
+            <!-- Section 1: Informations de base -->
+            <div class="mb-4">
+              <h5 class="border-bottom pb-2 mb-3">
+                <i class="fas fa-info-circle me-2 text-primary"></i>Informations générales
+              </h5>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group mb-3">
+                    <label for="nom" class="form-label">
+                      <i class="fas fa-signature me-1"></i>
+                      Nom de l'hôpital <span class="text-danger">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="nom"
+                      class="form-control"
+                      [class.is-invalid]="isFieldInvalid('nom')"
+                      formControlName="nom"
+                      placeholder="Ex: Hôpital National de Dakar"
+                      [attr.aria-invalid]="isFieldInvalid('nom')"
+                      [attr.aria-describedby]="isFieldInvalid('nom') ? 'nomError' : null"
+                    />
+                    <div id="nomError" class="invalid-feedback" *ngIf="isFieldInvalid('nom')">
+                      {{ getFieldError('nom') }}
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="form-group mb-3">
+                    <label for="typeEtablissement" class="form-label">
+                      <i class="fas fa-clinic-medical me-1"></i>
+                      Type d'établissement
+                    </label>
+                    <select
+                      id="typeEtablissement"
+                      class="form-select"
+                      [class.is-invalid]="isFieldInvalid('typeEtablissement')"
+                      formControlName="typeEtablissement"
+                    >
+                      <option value="">Sélectionner un type</option>
+                      <option value="CHU">Centre Hospitalier Universitaire (CHU)</option>
+                      <option value="Hôpital Régional">Hôpital Régional</option>
+                      <option value="Hôpital District">Hôpital de District</option>
+                      <option value="Clinique Privée">Clinique Privée</option>
+                      <option value="Autre">Autre</option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('typeEtablissement')">
+                      {{ getFieldError('typeEtablissement') }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group mb-3">
+                    <label for="capaciteLits" class="form-label">
+                      <i class="fas fa-procedures me-1"></i>
+                      Capacité en lits
+                    </label>
+                    <div class="input-group">
+                      <input
+                        type="number"
+                        id="capaciteLits"
+                        class="form-control"
+                        [class.is-invalid]="isFieldInvalid('capaciteLits')"
+                        formControlName="capaciteLits"
+                        placeholder="Ex: 250"
+                        min="1"
+                        max="10000"
+                      />
+                      <span class="input-group-text">lits</span>
+                    </div>
+                    <small class="form-text text-muted">≈ {{hopitalForm.get('capaciteLits')?.value / 2 | number:'1.0-0'}} chambres (2 lits/chambre)</small>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('capaciteLits')">
+                      {{ getFieldError('capaciteLits') }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group mb-3">
+                    <label for="statut" class="form-label">
+                      <i class="fas fa-check-circle me-1"></i>
+                      Statut <span class="text-danger">*</span>
+                    </label>
+                    <select
+                      id="statut"
+                      class="form-select"
+                      [class.is-invalid]="isFieldInvalid('statut')"
+                      formControlName="statut"
+                    >
+                      <option value="">Sélectionner un statut</option>
+                      <option *ngFor="let statut of statutOptions" [value]="statut">
+                        {{ statut }}
+                      </option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('statut')">
+                      {{ getFieldError('statut') }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 2: Localisation -->
+            <div class="mb-4">
+              <h5 class="border-bottom pb-2 mb-3">
+                <i class="fas fa-map-marked-alt me-2 text-primary"></i>Localisation
+              </h5>
+              
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group mb-3">
+                    <label for="adresse" class="form-label">
+                      <i class="fas fa-map-marker-alt me-1"></i>
+                      Adresse complète
+                    </label>
+                    <textarea
+                      id="adresse"
+                      class="form-control"
+                      formControlName="adresse"
+                      rows="2"
+                      placeholder="Ex: Avenue Cheikh Anta Diop, BP 3006 Dakar"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group mb-3">
+                    <label for="region" class="form-label">
+                      <i class="fas fa-map me-1"></i>
+                      Région <span class="text-danger">*</span>
+                    </label>
+                    <select
+                      id="region"
+                      class="form-select"
+                      [class.is-invalid]="isFieldInvalid('region')"
+                      formControlName="region"
+                      (change)="onRegionChange()"
+                    >
+                      <option value="">Sélectionner une région</option>
+                      <option *ngFor="let region of regions" [value]="region.code">
+                        {{ region.nom }}
+                      </option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('region')">
+                      {{ getFieldError('region') }}
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-4">
+                  <div class="form-group mb-3">
+                    <label for="ville" class="form-label">
+                      <i class="fas fa-city me-1"></i>
+                      Ville <span class="text-danger">*</span>
+                    </label>
+                    <select
+                      id="ville"
+                      class="form-select"
+                      [class.is-invalid]="isFieldInvalid('ville')"
+                      formControlName="ville"
+                      [disabled]="!hopitalForm.get('region')?.value"
+                    >
+                      <option value="">Sélectionnez d'abord une région</option>
+                      <option *ngFor="let ville of villesFiltrees" [value]="ville">
+                        {{ ville }}
+                      </option>
+                    </select>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('ville')">
+                      {{ getFieldError('ville') }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="form-group mb-3">
+                    <label for="coordonneesGps" class="form-label">
+                      <i class="fas fa-map-pin me-1"></i>
+                      Coordonnées GPS
+                    </label>
+                    <div class="input-group">
+                      <input
+                        type="text"
+                        id="coordonneesGps"
+                        class="form-control"
+                        formControlName="coordonneesGps"
+                        placeholder="Latitude, Longitude"
+                        pattern="-?\d{1,3}\.\d+,-?\d{1,3}\.\d+"
+                      />
+                      <button type="button" (click)="locateOnMap()">
+                        {{ showMap ? 'Cacher la carte' : 'Afficher la carte' }}
+                      </button>
+
+           
+                    </div>
+                    <small class="form-text text-muted">Format: 14.6928,-17.4467</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Carte interactive (optionnelle) -->
+              <div class="row mb-3" *ngIf="showMap">
+                <div class="col-12">
+                  <div class="map-container" style="height: 250px; border-radius: 5px;">
+                    <div *ngIf="showMap" id="map" style="height: 400px; margin-top: 10px;"></div>
+                  </div>
+                  <small class="text-muted">Cliquez sur la carte pour définir l'emplacement</small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3: Contact et horaires -->
+            <div class="mb-4">
+              <h5 class="border-bottom pb-2 mb-3">
+                <i class="fas fa-address-book me-2 text-primary"></i>Contact et horaires
+              </h5>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group mb-3">
+                    <label for="telephone" class="form-label">
+                      <i class="fas fa-phone me-1"></i>
+                      Téléphone principal
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">+221</span>
+                      <input
+                        type="tel"
+                        id="telephone"
+                        class="form-control"
+                        [class.is-invalid]="isFieldInvalid('telephone')"
+                        formControlName="telephone"
+                        placeholder="77 123 45 67"
+                        pattern="[0-9]{9}"
+                        maxlength="9"
+                      />
+                    </div>
+                    <small class="form-text text-muted">Format: 9 chiffres sans espaces</small>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('telephone')">
+                      {{ getFieldError('telephone') }}
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="form-group mb-3">
+                    <label for="email" class="form-label">
+                      <i class="fas fa-envelope me-1"></i>
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      class="form-control"
+                      [class.is-invalid]="isFieldInvalid('email')"
+                      formControlName="email"
+                      placeholder="contact@hopital.sn"
+                    />
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('email')">
+                      {{ getFieldError('email') }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group mb-3">
+                    <label for="siteWeb" class="form-label">
+                      <i class="fas fa-globe me-1"></i>
+                      Site Web
+                    </label>
+                    <div class="input-group">
+                      <span class="input-group-text">https://</span>
+                      <input
+                        type="url"
+                        id="siteWeb"
+                        class="form-control"
+                        [class.is-invalid]="isFieldInvalid('siteWeb')"
+                        formControlName="siteWeb"
+                        placeholder="www.hopital.sn"
+                      />
+                    </div>
+                    <div class="invalid-feedback" *ngIf="isFieldInvalid('siteWeb')">
+                      {{ getFieldError('siteWeb') }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group mb-3">
+                    <label for="heuresOuverture" class="form-label">
+                      <i class="fas fa-clock me-1"></i>
+                      Heures d'ouverture
+                    </label>
+                    <input
+                      type="text"
+                      id="heuresOuverture"
+                      class="form-control"
+                      formControlName="heuresOuverture"
+                      placeholder="Ex: Lundi-Vendredi: 8h-18h, Urgences 24h/24"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 4: Logo et médias -->
+            <div class="mb-4" *ngIf="isEditMode">
+              <h5 class="border-bottom pb-2 mb-3">
+                <i class="fas fa-images me-2 text-primary"></i>Logo et médias
+              </h5>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group mb-3">
+                    <label class="form-label">
+                      <i class="fas fa-camera me-1"></i>
+                      Logo de l'hôpital
+                    </label>
+                    <div class="d-flex align-items-center">
+                      <div class="me-3">
+                        <img [src]="logoPreview || 'assets/img/default-hospital.png'" 
+                             alt="Logo" 
+                             class="img-thumbnail" 
+                             style="width: 80px; height: 80px; object-fit: cover;">
+                      </div>
+                      <div>
+                        <input type="file" 
+                               class="form-control" 
+                               id="logo" 
+                               accept="image/*" 
+                               (change)="onLogoChange($event)"
+                               style="display: none;">
+                        <label for="logo" class="btn btn-sm btn-outline-primary mb-1">
+                          <i class="fas fa-upload me-1"></i>Choisir une image
+                        </label>
+                        <button *ngIf="logoPreview" 
+                                class="btn btn-sm btn-outline-danger ms-2" 
+                                (click)="removeLogo()">
+                          <i class="fas fa-trash-alt me-1"></i>Supprimer
+                        </button>
+                        <div class="form-text">Taille max: 2MB (Format: JPG, PNG)</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="d-flex justify-content-between">
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    (click)="onCancel()"
+                    [disabled]="loading"
+                  >
+                    <i class="fas fa-times me-1"></i>Annuler
+                  </button>
+                  
+                  <div class="d-flex gap-2">
+                    <button
+                      type="button"
+                      class="btn btn-outline-info"
+                      (click)="previewHopital()"
+                      [disabled]="hopitalForm.invalid"
+                    >
+                      <i class="fas fa-eye me-1"></i>Aperçu
+                    </button>
+                    
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                      [disabled]="loading || hopitalForm.invalid"
+                    >
+                      <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                      <i class="fas" [class.fa-save]="isEditMode" [class.fa-plus]="!isEditMode"></i>
+                      {{ isEditMode ? 'Mettre à jour' : 'Créer l\'hôpital' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

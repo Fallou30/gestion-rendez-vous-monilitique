@@ -1,0 +1,304 @@
+<app-dashboard-nav [currentRole]="userType"></app-dashboard-nav>
+<div class="dashboard-container">
+  <!-- Header -->
+ 
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card primary">
+      <div class="stat-icon">
+        <svg fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" />
+        </svg>
+      </div>
+      <div class="stat-info">
+        <h3>{{ prochainRdv() }}</h3>
+        <p>Prochain RDV</p>
+      </div>
+    </div>
+
+    <div class="stat-card success">
+      <div class="stat-icon">
+        <svg fill="currentColor" viewBox="0 0 24 24">
+          <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+        </svg>
+      </div>
+      <div class="stat-info">
+        <h3>{{ consultationsTerminees() }}</h3>
+        <p>Consultations</p>
+      </div>
+    </div>
+
+    <div class="stat-card warning">
+      <div class="stat-icon">
+        <svg fill="currentColor" viewBox="0 0 24 24">
+          <path
+            d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,7H13V13H11V7M11,15H13V17H11V15Z" />
+        </svg>
+      </div>
+      <div class="stat-info">
+        <h3>{{ examensEnAttente() }}</h3>
+        <p>Examens en attente</p>
+      </div>
+    </div>
+
+    <div class="stat-card info">
+      <div class="stat-icon">
+        <svg fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12,2L13.09,8.26L22,9L17,14L18.18,22.73L12,19.27L5.82,22.73L7,14L2,9L10.91,8.26L12,2Z" />
+        </svg>
+      </div>
+      <div class="stat-info">
+        <h3>{{ prescriptionsActives() }}</h3>
+        <p>Prescriptions actives</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <nav class="tab-navigation">
+    <button class="tab-btn" [class.active]="activeTab() === 'rendez-vous'" (click)="setActiveTab('rendez-vous')">
+      <svg class="tab-icon" fill="currentColor" viewBox="0 0 24 24">
+        <path
+          d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" />
+      </svg>
+      Rendez-vous
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'consultations'" (click)="setActiveTab('consultations')">
+      <svg class="tab-icon" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+      </svg>
+      Consultations
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'examens'" (click)="setActiveTab('examens')">
+      <svg class="tab-icon" fill="currentColor" viewBox="0 0 24 24">
+        <path
+          d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,7H13V13H11V7M11,15H13V17H11V15Z" />
+      </svg>
+      Examens
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'prescriptions'" (click)="setActiveTab('prescriptions')">
+      <svg class="tab-icon" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12,2L13.09,8.26L22,9L17,14L18.18,22.73L12,19.27L5.82,22.73L7,14L2,9L10.91,8.26L12,2Z" />
+      </svg>
+      Prescriptions
+    </button>
+  </nav>
+
+  <!-- Content Area -->
+  <main class="dashboard-content">
+    <!-- Rendez-vous Tab -->
+    @if (activeTab() === 'rendez-vous') {
+    <div class="content-section">
+      <div class="section-header">
+        <h2>Mes Rendez-vous</h2>
+      <button class="btn btn-primary" (click)="redirigerVersFormulaireRdv()">
+          <svg class="btn-icon" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+          </svg>
+          Nouveau RDV
+        </button>
+      </div>
+
+      <div class="rdv-grid">
+        @for (rdv of rendezVousList(); track rdv.id) {
+        <div class="rdv-card" [class]="getStatutClass(rdv.statut)">
+          <div class="rdv-header">
+            <div class="rdv-date">
+              <span class="date">{{ formatDate(rdv.dateHeure) }}</span>
+              <span class="time">{{ formatTime(rdv.dateHeure) }}</span>
+            </div>
+            <div class="rdv-status">
+              <span class="status-badge" [class]="getStatutClass(rdv.statut)">
+                {{ rdv.statut }}
+              </span>
+            </div>
+          </div>
+          <div class="rdv-body">
+            <h4>{{ rdv.medecin }}</h4>
+            <p class="service">{{ rdv.service }}</p>
+            <p class="duration">Durée: {{ rdv.dureePrevue }} min</p>
+          </div>
+          <div class="rdv-actions">
+            <button class="btn btn-sm btn-outline" (click)="viewRdv(rdv.id)">
+              <svg class="btn-icon" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z" />
+              </svg>
+              Voir
+            </button>
+            @if (rdv.statut === 'EN_ATTENTE') {
+            <button class="btn btn-sm btn-success" (click)="confirmerRdv(rdv.id)">
+              Confirmer
+            </button>
+            }
+            <button class="btn btn-sm btn-danger" (click)="annulerRdv(rdv.id)">
+              Annuler
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    <!-- Consultations Tab -->
+    @if (activeTab() === 'consultations') {
+    <div class="content-section">
+      <div class="section-header">
+        <h2>Historique des Consultations</h2>
+        <div class="search-filter">
+          <input type="text" placeholder="Rechercher..." class="search-input" [(ngModel)]="searchTerm"
+            (input)="filterConsultations()">
+        </div>
+      </div>
+
+      <div class="consultations-list">
+        @for (consultation of filteredConsultations(); track consultation.id) {
+        <div class="consultation-card">
+          <div class="consultation-header">
+            <div class="consultation-date">
+              {{ formatDate(consultation.dateConsultation) }}
+            </div>
+            <div class="consultation-duration">
+              {{ consultation.dureeReelle }} min
+            </div>
+          </div>
+          <div class="consultation-body">
+            <div class="consultation-field">
+              <label>Symptômes:</label>
+              <p>{{ consultation.symptomes }}</p>
+            </div>
+            <div class="consultation-field">
+              <label>Diagnostic:</label>
+              <p>{{ consultation.diagnostic }}</p>
+            </div>
+            <div class="consultation-field">
+              <label>Recommandations:</label>
+              <p>{{ consultation.recommandations }}</p>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    <!-- Examens Tab -->
+    @if (activeTab() === 'examens') {
+    <div class="content-section">
+      <div class="section-header">
+        <h2>Mes Examens</h2>
+        <div class="filter-buttons">
+          <button class="btn btn-outline" [class.active]="examenFilter() === 'tous'" (click)="setExamenFilter('tous')">
+            Tous
+          </button>
+          <button class="btn btn-outline" [class.active]="examenFilter() === 'en-attente'"
+            (click)="setExamenFilter('en-attente')">
+            En attente
+          </button>
+          <button class="btn btn-outline" [class.active]="examenFilter() === 'terminés'"
+            (click)="setExamenFilter('terminés')">
+            Terminés
+          </button>
+        </div>
+      </div>
+
+      <div class="examens-grid">
+        @for (examen of filteredExamens(); track examen.id) {
+        <div class="examen-card" [class]="getExamenStatusClass(examen.statut)">
+          <div class="examen-header">
+            <h4>{{ examen.nomExamen }}</h4>
+            <span class="examen-type">{{ examen.typeExamen }}</span>
+          </div>
+          <div class="examen-body">
+            <p class="examen-description">{{ examen.description }}</p>
+            @if (examen.dateRealisation) {
+            <p class="examen-date">
+              <strong>Date:</strong> {{ formatDate(examen.dateRealisation) }}
+            </p>
+            }
+            @if (examen.urgence) {
+            <div class="urgence-badge">
+              <svg class="urgence-icon" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12,2L13.09,8.26L22,9L17,14L18.18,22.73L12,19.27L5.82,22.73L7,14L2,9L10.91,8.26L12,2Z" />
+              </svg>
+              URGENT
+            </div>
+            }
+          </div>
+          @if (examen.resultats) {
+          <div class="examen-results">
+            <h5>Résultats:</h5>
+            <p>{{ examen.resultats }}</p>
+            @if (examen.interpretation) {
+            <h5>Interprétation:</h5>
+            <p>{{ examen.interpretation }}</p>
+            }
+          </div>
+          }
+        </div>
+        }
+      </div>
+    </div>
+    }
+
+    <!-- Prescriptions Tab -->
+    @if (activeTab() === 'prescriptions') {
+    <div class="content-section">
+      <div class="section-header">
+        <h2>Mes Prescriptions</h2>
+      </div>
+
+      <div class="prescriptions-list">
+        @for (prescription of prescriptionsList(); track prescription.id) {
+        <div class="prescription-card">
+          <div class="prescription-header">
+            <div class="prescription-date">
+              Créée le {{ formatDate(prescription.dateCreation) }}
+            </div>
+            <div class="prescription-status">
+              <span class="status-badge" [class]="getPrescriptionStatusClass(prescription.statut)">
+                {{ prescription.statut }}
+              </span>
+            </div>
+          </div>
+          <div class="prescription-body">
+            <div class="prescription-duration">
+              <strong>Durée du traitement:</strong> {{ prescription.dureeTraitement }} jours
+            </div>
+            <div class="prescription-instructions">
+              <strong>Instructions générales:</strong>
+              <p>{{ prescription.instructionsGenerales }}</p>
+            </div>
+            <div class="medicaments-section">
+              <h4>Médicaments:</h4>
+              @for (medicament of prescription.medicaments; track medicament.id) {
+              <div class="medicament-item">
+                <div class="medicament-name">{{ medicament.nomMedicament }}</div>
+                <div class="medicament-details">
+                  <span class="dosage">{{ medicament.dosage }}</span>
+                  <span class="frequence">{{ medicament.frequence }}</span>
+                  <span class="duree">{{ medicament.duree }} jours</span>
+                </div>
+                <div class="medicament-status">
+                  <span class="status-badge" [class]="getMedicamentStatusClass(medicament.statut)">
+                    {{ medicament.statut }}
+                  </span>
+                </div>
+                @if (medicament.instructionsSpecifiques) {
+                <div class="medicament-instructions">
+                  {{ medicament.instructionsSpecifiques }}
+                </div>
+                }
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+  </main>
+</div>

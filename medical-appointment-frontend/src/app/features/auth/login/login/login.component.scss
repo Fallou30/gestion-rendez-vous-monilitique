@@ -1,0 +1,402 @@
+// Couleurs principales harmonisées avec le style du site
+$color-primary: #2c5aa0;
+$color-primary-light: #dbeafe;
+$color-secondary: #4b5563;
+$color-success: #059669;
+$color-success-light: #d1fae5;
+$color-error: #dc2626;
+$color-error-light: #fee2e2;
+$color-warning: #d97706;
+$color-warning-light: #fef3c7;
+$color-danger: #dc2626;
+
+// Arrière-plans
+$color-bg-primary: #ffffff;
+$color-bg-secondary: #f8fafc;
+
+// Texte
+$color-text-primary: #111827;
+$color-text-secondary: #64748b;
+
+// Bordures
+$color-border: #e5e7eb;
+$color-gray-50: #f9fafb;
+
+// Ombres
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
+
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-bg-secondary;
+  padding: 2rem;
+}
+
+.login-card {
+  background: $color-bg-primary;
+  border-radius: 20px;
+  box-shadow: $shadow-lg;
+  padding: 3rem;
+  width: 100%;
+  max-width: 480px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+
+  &:hover {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+  }
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+
+  h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: $color-primary;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  p {
+    color: $color-text-secondary;
+    font-size: 1.1rem;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}
+
+.login-form {
+  .form-group {
+    margin-bottom: 1.75rem;
+
+    label {
+      display: block;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+      color: $color-text-primary;
+      font-size: 1rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: 1px solid $color-border;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s;
+      background: $color-bg-secondary;
+
+      &:focus {
+        border-color: $color-primary;
+        box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+        outline: none;
+        background: white;
+      }
+
+      &.input-error {
+        border-color: $color-error;
+      }
+    }
+
+    .password-input {
+      position: relative;
+
+      input {
+        padding-right: 3rem;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: $color-text-secondary;
+        cursor: pointer;
+        padding: 0.5rem;
+        font-size: 1.25rem;
+        transition: all 0.3s;
+
+        &:hover {
+          color: $color-primary;
+          transform: translateY(-50%) scale(1.1);
+        }
+      }
+    }
+  }
+
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        accent-color: $color-primary;
+      }
+    }
+
+    .forgot-password {
+      color: $color-primary;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+
+      &:hover {
+        color: darken($color-primary, 10%);
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.error-message {
+  color: $color-error;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &.global-error {
+    text-align: center;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: rgba($color-error, 0.05);
+    border-radius: 12px;
+    font-size: 1rem;
+    border-left: 4px solid $color-error;
+  }
+}
+
+.submit-button {
+  width: 100%;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, $color-primary 0%, darken($color-primary, 10%) 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba($color-primary, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba($color-primary, 0.4);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, lighten($color-primary, 15%) 0%, lighten($color-primary, 5%) 100%);
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+  }
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1rem;
+  color: $color-text-secondary;
+
+  a {
+    color: $color-primary;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+
+    &:hover {
+      color: darken($color-primary, 10%);
+      text-decoration: underline;
+    }
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Badge styles - Version améliorée
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+
+  &-success {
+    background: linear-gradient(135deg, $color-success 0%, darken($color-success, 10%) 100%);
+    color: white;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba($color-success, 0.3);
+    }
+  }
+
+  &-primary {
+    background: linear-gradient(135deg, $color-primary 0%, darken($color-primary, 10%) 100%);
+    color: white;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba($color-primary, 0.3);
+    }
+  }
+
+  &-warning {
+    background: linear-gradient(135deg, $color-warning 0%, darken($color-warning, 10%) 100%);
+    color: white;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba($color-warning, 0.3);
+    }
+  }
+
+  &-danger {
+    background: linear-gradient(135deg, $color-danger 0%, darken($color-danger, 10%) 100%);
+    color: white;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba($color-danger, 0.3);
+    }
+  }
+}
+
+// Animation pour le formulaire
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-card {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+.login-form {
+  max-width: 100%;
+  overflow: hidden;
+
+  .form-group {
+    width: 100%;
+    
+    input {
+      width: 100%;
+      box-sizing: border-box; // Empêche le débordement
+      max-width: 100%;
+    }
+  }
+
+  .password-input {
+    position: relative;
+    width: 100%;
+
+    input {
+      padding-right: 3rem; // Espace pour l'icône
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: $color-text-secondary;
+      cursor: pointer;
+      padding: 0;
+      font-size: 1.1rem;
+    }
+  }
+
+  .form-options {
+    display: flex;
+    flex-wrap: wrap; // Permet le retour à la ligne sur petits écrans
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+
+      .custom-checkbox {
+        width: 1.1rem;
+        height: 1.1rem;
+        accent-color: $color-primary;
+      }
+    }
+
+    .forgot-password {
+      white-space: nowrap;
+    }
+  }
+
+  .submit-button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+// Responsive pour petits écrans
+@media (max-width: 480px) {
+  .login-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}

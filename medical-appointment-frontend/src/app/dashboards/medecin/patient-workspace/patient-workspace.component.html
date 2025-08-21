@@ -1,0 +1,138 @@
+<!-- Loading -->
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner">
+    <i class="fas fa-heartbeat"></i>
+    <p>Chargement de l'espace patient...</p>
+  </div>
+</div>
+
+<!-- Error -->
+<div *ngIf="error" class="error-container">
+  <i class="fas fa-exclamation-triangle"></i>
+  <h3>Erreur</h3>
+  <p>{{ error }}</p>
+  <button (click)="loadPatientData()" class="btn btn-primary">
+    <i class="fas fa-sync-alt"></i> Réessayer
+  </button>
+</div>
+
+<!-- Main Workspace -->
+<div *ngIf="!isLoading && !error" class="workspace-container">
+  
+  <!-- Header with patient info -->
+  <app-patient-info-header 
+    [patient]="patient" 
+    [rendezVousActuel]="rendezVousActuel"
+    (onRetourDashboard)="retourDashboard()"
+    (onImprimerDossier)="imprimerDossier()">
+  </app-patient-info-header>
+
+  <!-- Navigation tabs -->
+  <div class="workspace-nav">
+    <div class="nav-tabs">
+      <button 
+        class="nav-tab" 
+        [class.active]="activeTab === 'consultation'"
+        (click)="setActiveTab('consultation')">
+        <i class="fas fa-stethoscope"></i>
+        <span>Consultation</span>
+      </button>
+      
+      <button 
+        class="nav-tab" 
+        [class.active]="activeTab === 'dossier'"
+        (click)="setActiveTab('dossier')">
+        <i class="fas fa-folder-medical"></i>
+        <span>Dossier médical</span>
+      </button>
+      
+      <button 
+        class="nav-tab" 
+        [class.active]="activeTab === 'prescription'"
+        (click)="setActiveTab('prescription')">
+        <i class="fas fa-prescription"></i>
+        <span>Prescription</span>
+      </button>
+      
+      <button 
+        class="nav-tab" 
+        [class.active]="activeTab === 'examens'"
+        (click)="setActiveTab('examens')">
+        <i class="fas fa-microscope"></i>
+        <span>Examens</span>
+      </button>
+      
+      <button 
+        class="nav-tab" 
+        [class.active]="activeTab === 'documents'"
+        (click)="setActiveTab('documents')">
+        <i class="fas fa-file-medical"></i>
+        <span>Documents</span>
+      </button>
+    </div>
+    
+    <!-- Actions rapides -->
+    <div class="nav-actions">
+      <button (click)="sauvegarderConsultation()" class="btn btn-success">
+        <i class="fas fa-save"></i> Sauvegarder
+      </button>
+      
+      <button 
+        *ngIf="rendezVousId" 
+        (click)="terminerConsultation()" 
+        class="btn btn-primary">
+        <i class="fas fa-check"></i> Terminer consultation
+      </button>
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="workspace-content">
+    
+    <!-- Consultation Tab -->
+    <div *ngIf="activeTab === 'consultation'" class="tab-content">
+      <app-consultation-en-cours
+        [patientId]="patientId"
+        [rendezVousId]="rendezVousId"
+        [consultationData]="consultationData"
+        (onDataChange)="onConsultationDataChange($event)">
+      </app-consultation-en-cours>
+    </div>
+
+    <!-- Dossier médical Tab -->
+    <div *ngIf="activeTab === 'dossier'" class="tab-content">
+      <app-dossier-medical
+        [patient]="patient"
+        [dossierMedical]="dossierMedical"
+        (onDossierUpdate)="loadDossierMedical()">
+      </app-dossier-medical>
+    </div>
+
+    <!-- Prescription Tab -->
+    <div *ngIf="activeTab === 'prescription'" class="tab-content">
+      <app-prescription
+        [patientId]="patientId"
+        [consultationData]="consultationData">
+      </app-prescription>
+    </div>
+
+    <!-- Examens Tab -->
+    <div *ngIf="activeTab === 'examens'" class="tab-content">
+      <app-examens
+        [patientId]="patientId"
+        [dossierMedical]="dossierMedical">
+      </app-examens>
+    </div>
+
+    <!-- Documents Tab -->
+   <!-- Documents Tab (fusionné avec le dossier médical) -->
+<div *ngIf="activeTab === 'documents'" class="tab-content">
+  <app-dossier-medical
+    [patient]="patient"
+    [dossierMedical]="dossierMedical"
+    (onDossierUpdate)="loadDossierMedical()">
+  </app-dossier-medical>
+</div>
+
+  </div>
+</div>

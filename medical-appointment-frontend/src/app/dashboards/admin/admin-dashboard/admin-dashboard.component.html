@@ -1,0 +1,473 @@
+<app-dashboard-nav [currentRole]="userType"></app-dashboard-nav>
+<div class="admin-dashboard">
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="dashboard-title">
+          <i class="fas fa-chart-pie"></i>
+          Tableau de bord Administrateur
+        </h1>
+        <p class="dashboard-subtitle">
+          Gestion complète du système hospitalier HMS
+        </p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" routerLink="/admin/rapports">
+          <i class="fas fa-download"></i>
+          Exporter rapport
+        </button>
+        <button class="btn btn-secondary" routerLink="/admin/parametres">
+          <i class="fas fa-cogs"></i>
+          Paramètres
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card patients">
+      <div class="stat-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ systemStats.totalPatients }}</div>
+        <div class="stat-label">Patients totaux</div>
+        <div class="stat-change positive">
+          <i class="fas fa-arrow-up"></i>
+          +12% ce mois
+        </div>
+      </div>
+      <div class="stat-action">
+        <button class="btn-link" routerLink="/admin/users">
+          Gérer les patients
+        </button>
+      </div>
+    </div>
+
+    <div class="stat-card medecins">
+      <div class="stat-icon">
+        <i class="fas fa-user-md"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ systemStats.totalMedecins }}</div>
+        <div class="stat-label">Médecins actifs</div>
+        <div class="stat-change positive">
+          <i class="fas fa-arrow-up"></i>
+          +3 nouveaux
+        </div>
+      </div>
+      <div class="stat-action">
+        <button class="btn-link" routerLink="/admin/users">
+          Gérer les médecins
+        </button>
+      </div>
+    </div>
+
+    <div class="stat-card rendezvous">
+      <div class="stat-icon">
+        <i class="fas fa-calendar-alt"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ systemStats.totalRendezVous }}</div>
+        <div class="stat-label">Rendez-vous aujourd'hui</div>
+        <div class="stat-change neutral">
+          <i class="fas fa-clock"></i>
+          {{ systemStats.rendezVousEnCours }} en cours
+        </div>
+      </div>
+      <div class="stat-action">
+        <button class="btn-link" routerLink="/admin/rendez-vous">
+          Voir le planning
+        </button>
+      </div>
+    </div>
+
+    <div class="stat-card validations">
+      <div class="stat-icon">
+        <i class="fas fa-clipboard-check"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ systemStats.pendingValidations }}</div>
+        <div class="stat-label">Validations en attente</div>
+        <div class="stat-change warning">
+          <i class="fas fa-exclamation-triangle"></i>
+          Action requise
+        </div>
+      </div>
+      <div class="stat-action">
+        <button class="btn-link urgent" routerLink="/admin/validate-medecins">
+          Traiter les demandes
+        </button>
+      </div>
+    </div>
+
+    <div class="stat-card receptionnistes">
+      <div class="stat-icon">
+        <i class="fas fa-user-tie"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ systemStats.totalReceptionnistes }}</div>
+        <div class="stat-label">Réceptionnistes</div>
+        <div class="stat-change positive">
+          <i class="fas fa-check"></i>
+          Tous actifs
+        </div>
+      </div>
+      <div class="stat-action">
+        <button class="btn-link" routerLink="/admin/users">
+          Gérer l'équipe
+        </button>
+      </div>
+    </div>
+
+    <!-- NOUVELLES CARTES AJOUTÉES -->
+    <div class="stat-card hopitaux">
+      <div class="stat-icon">
+        <i class="fas fa-hospital"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ systemStats.totalHopitaux }}</div>
+        <div class="stat-label">Hôpitaux</div>
+        <div class="stat-change positive">
+          <i class="fas fa-building"></i>
+          Infrastructures
+        </div>
+      </div>
+      <div class="stat-action">
+        <button class="btn-link" routerLink="/hopitaux">
+          Gérer hôpitaux
+        </button>
+      </div>
+    </div>
+
+    <div class="stat-card services">
+      <div class="stat-icon">
+        <i class="fas fa-concierge-bell"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ systemStats.totalServices }}</div>
+        <div class="stat-label">Services</div>
+        <div class="stat-change positive">
+          <i class="fas fa-cogs"></i>
+          Spécialités
+        </div>
+      </div>
+      <div class="stat-action">
+        <button class="btn-link" routerLink="/services">
+          Gérer services
+        </button>
+      </div>
+    </div>
+
+    <div class="stat-card revenus">
+      <div class="stat-icon">
+        <i class="fas fa-euro-sign"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ systemStats.revenusMensuel | currency:'EUR':'symbol':'1.0-0' }}</div>
+        <div class="stat-label">Revenus ce mois</div>
+        <div class="stat-change positive">
+          <i class="fas fa-arrow-up"></i>
+          +8% vs mois dernier
+        </div>
+      </div>
+      <div class="stat-action">
+        <button class="btn-link" routerLink="/admin/finances">
+          Voir les finances
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="left-column">
+      <div class="section-card">
+        <div class="section-header">
+          <h2>
+            <i class="fas fa-bolt"></i>
+            Actions rapides
+          </h2>
+        </div>
+        <div class="quick-actions-grid">
+          <button class="quick-action-btn patients" routerLink="/admin/patient/nouveau">
+            <div class="action-icon">
+              <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="action-text">
+              <h3>Nouveau patient</h3>
+              <p>Créer un dossier patient</p>
+            </div>
+          </button>
+
+          <button class="quick-action-btn medecins" routerLink="/admin/medecins/nouveau">
+            <div class="action-icon">
+              <i class="fas fa-user-md"></i>
+            </div>
+            <div class="action-text">
+              <h3>Ajouter médecin</h3>
+              <p>Enregistrer un nouveau médecin</p>
+            </div>
+          </button>
+
+          <button class="quick-action-btn rendezvous" routerLink="/admin/rendez-vous/nouveau">
+            <div class="action-icon">
+              <i class="fas fa-calendar-plus"></i>
+            </div>
+            <div class="action-text">
+              <h3>Planifier RDV</h3>
+              <p>Créer un rendez-vous</p>
+            </div>
+          </button>
+
+          <button class="quick-action-btn validations" routerLink="/admin/validate-medecins"
+            [class.urgent]="systemStats.pendingValidations > 0">
+            <div class="action-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="action-text">
+              <h3>Valider demandes</h3>
+              <p>{{ systemStats.pendingValidations }} en attente</p>
+            </div>
+            <div *ngIf="systemStats.pendingValidations > 0" class="action-badge">
+              {{ systemStats.pendingValidations }}
+            </div>
+          </button>
+
+          <button class="quick-action-btn hopitaux" routerLink="/hopitaux">
+            <div class="action-icon">
+              <i class="fas fa-hospital"></i>
+            </div>
+            <div class="action-text">
+              <h3>Gérer hôpitaux</h3>
+              <p>{{ systemStats.totalHopitaux }} établissements</p>
+            </div>
+          </button>
+
+          <button class="quick-action-btn services" routerLink="/services">
+            <div class="action-icon">
+              <i class="fas fa-concierge-bell"></i>
+            </div>
+            <div class="action-text">
+              <h3>Gérer services</h3>
+              <p>{{ systemStats.totalServices }} spécialités</p>
+            </div>
+          </button>
+
+          <button class="quick-action-btn rapports" routerLink="/admin/rapports">
+            <div class="action-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="action-text">
+              <h3>Générer rapport</h3>
+              <p>Statistiques détaillées</p>
+            </div>
+          </button>
+
+          <button class="quick-action-btn sauvegarde" routerLink="/admin/sauvegarde">
+            <div class="action-icon">
+              <i class="fas fa-database"></i>
+            </div>
+            <div class="action-text">
+              <h3>Sauvegarder</h3>
+              <p>Backup des données</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>
+            <i class="fas fa-chart-area"></i>
+            Statistiques hebdomadaires
+          </h2>
+          <div class="header-actions">
+            <select class="select-period">
+              <option value="7">7 derniers jours</option>
+              <option value="30">30 derniers jours</option>
+              <option value="90">3 derniers mois</option>
+            </select>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="weeklyChart" width="400" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>
+            <i class="fas fa-chart-line"></i>
+            Rendez-vous mensuels
+          </h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="rdvChart" width="400" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>
+            <i class="fas fa-pills"></i>
+            Top médicaments prescrits
+          </h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="medicamentChart" width="400" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>
+            <i class="fas fa-stethoscope"></i>
+            Consultations par spécialité
+          </h2>
+        </div>
+        <div class="chart-container">
+          <canvas id="specialiteChart" width="400" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="section-card urgent" *ngIf="systemStats.pendingValidations > 0">
+        <div class="section-header">
+          <h2>
+            <i class="fas fa-exclamation-triangle"></i>
+            Validations urgentes
+          </h2>
+          <span class="badge-urgent">{{ systemStats.pendingValidations }}</span>
+        </div>
+        <div class="validation-list">
+          <div *ngFor="let validation of pendingValidations" class="validation-item">
+            <div class="validation-avatar">
+              <i [class]="validation.type === 'medecin' ? 'fas fa-user-md' : 'fas fa-user-tie'"></i>
+            </div>
+            <div class="validation-content">
+              <h4>{{ validation.nom }}</h4>
+              <p>{{ validation.type === 'medecin' ? 'Médecin' : 'Réceptionniste' }}</p>
+              <span class="validation-date">{{ validation.dateCreation | date:'short' }}</span>
+            </div>
+            <div class="validation-actions">
+              <button class="btn-validate" (click)="validerDemande(validation.id)">
+                <i class="fas fa-check"></i>
+              </button>
+              <button class="btn-reject" (click)="rejeterDemande(validation.id)">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="section-footer">
+          <button class="btn btn-primary" routerLink="/admin/validations">
+            Voir toutes les demandes
+          </button>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>
+            <i class="fas fa-history"></i>
+            Activités récentes
+          </h2>
+          <button class="btn-text" routerLink="/admin/activites">
+            Voir tout
+          </button>
+        </div>
+        <div class="activity-timeline">
+          <div *ngFor="let activity of recentActivities" class="activity-item">
+            <div class="activity-icon" [class]="activity.type">
+              <i [class]="activity.icon"></i>
+            </div>
+            <div class="activity-content">
+              <h4>{{ activity.title }}</h4>
+              <p>{{ activity.description }}</p>
+              <span class="activity-time">{{ activity.timestamp | date:'short' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>
+            <i class="fas fa-calendar-check"></i>
+            Prochains rendez-vous
+          </h2>
+          <button class="btn-text" routerLink="/admin/rendez-vous">
+            Planning complet
+          </button>
+        </div>
+        <div class="appointments-list">
+          <div *ngFor="let rdv of upcomingAppointments" class="appointment-item">
+            <div class="appointment-time">
+              <span class="time">{{ rdv.heure }}</span>
+              <span class="date">{{ rdv.date | date:'dd/MM' }}</span>
+            </div>
+            <div class="appointment-content">
+              <h4>{{ rdv.patient }}</h4>
+              <p>Dr. {{ rdv.medecin }}</p>
+              <span class="appointment-type">{{ rdv.type }}</span>
+            </div>
+            <div class="appointment-status" [class]="rdv.status">
+              <span>{{ rdv.status }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOUVELLE SECTION: Résumé Infrastructure -->
+      <div class="section-card">
+        <div class="section-header">
+          <h2>
+            <i class="fas fa-building"></i>
+            Infrastructure système
+          </h2>
+        </div>
+        <div class="infrastructure-summary">
+          <div class="infrastructure-item">
+            <div class="infrastructure-icon hopitaux">
+              <i class="fas fa-hospital"></i>
+            </div>
+            <div class="infrastructure-details">
+              <h4>{{ systemStats.totalHopitaux }}</h4>
+              <p>Hôpitaux enregistrés</p>
+            </div>
+            <button class="btn-link-small" routerLink="/hopitaux">
+              Gérer
+            </button>
+          </div>
+          
+          <div class="infrastructure-item">
+            <div class="infrastructure-icon services">
+              <i class="fas fa-concierge-bell"></i>
+            </div>
+            <div class="infrastructure-details">
+              <h4>{{ systemStats.totalServices }}</h4>
+              <p>Services disponibles</p>
+            </div>
+            <button class="btn-link-small" routerLink="/services">
+              Gérer
+            </button>
+          </div>
+
+          <div class="infrastructure-item">
+            <div class="infrastructure-icon creneaux">
+              <i class="fas fa-calendar-alt"></i>
+            </div>
+            <div class="infrastructure-details">
+              <h4>{{ systemStats.creneauxDisponibles }}</h4>
+              <p>Créneaux libres</p>
+            </div>
+            <button class="btn-link-small" routerLink="/admin/planning">
+              Voir
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

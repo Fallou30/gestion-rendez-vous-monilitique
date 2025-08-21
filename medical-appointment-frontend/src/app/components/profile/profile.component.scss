@@ -1,0 +1,442 @@
+/* profile.component.scss */
+
+// Variables pour un design moderne et cohérent
+$primary-color: #007bff;
+$primary-hover: #0056b3;
+$secondary-color: #6c757d;
+$success-color: #28a745;
+$text-dark: #343a40;
+$text-muted: #6c757d;
+$border-color: #dee2e6;
+$input-border: #ced4da;
+$input-focus-border: #007bff;
+$card-background: #ffffff;
+$surface-100: #f8f9fa;
+$surface-200: #e9ecef;
+$border-radius: 8px;
+$shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+// Mixin pour les transitions
+@mixin transition($properties: all, $duration: 0.3s, $easing: ease) {
+  transition: $properties $duration $easing;
+}
+
+// Mixin pour les boutons
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: $border-radius;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+  @include transition();
+  
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+.grid {
+  display: grid;
+  gap: 2rem;
+  
+  &.mt-8 {
+    margin-top: 2rem;
+  }
+}
+
+// Système de colonnes responsive
+.col-12 {
+  grid-column: span 12;
+}
+
+.md\:col-3 {
+  @media (min-width: 768px) {
+    grid-column: span 3;
+  }
+}
+
+.md\:col-9 {
+  @media (min-width: 768px) {
+    grid-column: span 9;
+  }
+}
+
+.md\:col-6 {
+  @media (min-width: 768px) {
+    grid-column: span 6;
+  }
+}
+
+// Configuration du grid principal
+.grid {
+  grid-template-columns: repeat(12, 1fr);
+  
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+    
+    .col-12,
+    .md\:col-3,
+    .md\:col-9,
+    .md\:col-6 {
+      grid-column: span 1;
+    }
+  }
+}
+
+.card {
+  background-color: $card-background;
+  border-radius: $border-radius;
+  box-shadow: $shadow;
+  padding: 2rem;
+  border: 1px solid $border-color;
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+  }
+}
+
+// Sidebar du profil
+.profile-avatar-container {
+  width: 12rem;
+  height: 12rem;
+  border-radius: 50%;
+  border: 4px solid $primary-color;
+  box-shadow: 0 0 0 8px rgba($primary-color, 0.1);
+  overflow: hidden;
+  position: relative;
+  
+  i {
+    color: $text-muted;
+    font-size: 4rem;
+  }
+}
+
+// Classes utilitaires Flexbox
+.flex {
+  display: flex;
+  
+  &.flex-column {
+    flex-direction: column;
+  }
+  
+  &.align-items-center {
+    align-items: center;
+  }
+  
+  &.justify-content-center {
+    justify-content: center;
+  }
+  
+  &.justify-content-end {
+    justify-content: flex-end;
+  }
+}
+
+// Classes utilitaires pour le texte
+.text-xl {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.text-gray-500 {
+  color: $text-muted;
+}
+
+// Classes utilitaires pour les marges
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mr-2 { margin-right: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+
+// Classes utilitaires pour la largeur
+.w-full { width: 100%; }
+.w-12rem { width: 12rem; }
+.h-12rem { height: 12rem; }
+
+// Classes utilitaires pour les bordures
+.border-circle { border-radius: 50%; }
+.border-bottom-1 { border-bottom: 1px solid $border-color; }
+.surface-border { border-color: $border-color; }
+.pb-2 { padding-bottom: 0.5rem; }
+
+// Classes utilitaires pour l'affichage
+.block { display: block; }
+
+// Boutons personnalisés
+.custom-button {
+  @include button-base;
+  background-color: $surface-100;
+  color: $text-dark;
+  border-color: $surface-200;
+
+  i {
+    margin-right: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: $surface-200;
+    transform: translateY(-1px);
+    box-shadow: $shadow;
+  }
+
+  &.w-full {
+    width: 100%;
+  }
+
+  &.mb-2 {
+    margin-bottom: 0.5rem;
+  }
+
+  &.custom-button-outlined {
+    background-color: transparent;
+    color: $primary-color;
+    border-color: $primary-color;
+
+    &:hover:not(:disabled) {
+      background-color: rgba($primary-color, 0.05);
+      transform: translateY(-1px);
+    }
+  }
+
+  &.custom-button-primary {
+    background-color: $primary-color;
+    color: white;
+    border-color: $primary-color;
+
+    &:hover:not(:disabled) {
+      background-color: $primary-hover;
+      border-color: $primary-hover;
+      transform: translateY(-1px);
+      box-shadow: $shadow-lg;
+    }
+  }
+}
+
+// Spinner personnalisé
+.custom-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.custom-spinner {
+  border: 4px solid rgba($primary-color, 0.1);
+  border-top: 4px solid $primary-color;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Champs de formulaire
+.field {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: $text-dark;
+    font-size: 0.875rem;
+
+    i {
+      margin-right: 0.5rem;
+      font-size: 1rem;
+      color: $primary-color;
+    }
+  }
+}
+
+.custom-input,
+.custom-textarea,
+.custom-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid $input-border;
+  border-radius: $border-radius;
+  font-size: 0.875rem;
+  color: $text-dark;
+  background-color: $card-background;
+  @include transition(border-color, box-shadow);
+  
+  &:focus {
+    border-color: $input-focus-border;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    outline: none;
+  }
+  
+  &:hover:not(:focus) {
+    border-color: darken($input-border, 10%);
+  }
+}
+
+.custom-textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.custom-select {
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.4l-118%20118.2L18.4%2074.9A17.6%2017.6%200%200%200%205.4%2061.8c-7.8-7.8-20.5-7.8-28.3%200-7.8%207.8-7.8%2020.5%200%2028.3l133%20133c7.8%207.8%2020.5%207.8%2028.3%200l133-133a20%2020%200%200%200%200-28.3c-7.8-7.7-20.6-7.7-28.4%200z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 0.75rem;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+// Champ de mot de passe personnalisé
+.custom-password-input {
+  position: relative;
+  width: 100%;
+
+  input {
+    padding-right: 3rem;
+  }
+
+  .toggle-password-visibility {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: $text-muted;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.25rem;
+    border-radius: calc($border-radius / 2);
+    @include transition();
+
+    &:hover {
+      color: $primary-color;
+      background-color: rgba($primary-color, 0.1);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
+    }
+  }
+}
+
+// Sections avec titres
+h2, h3 {
+  display: flex;
+  align-items: center;
+  color: $text-dark;
+  
+  i {
+    margin-right: 0.75rem;
+    color: $primary-color;
+  }
+}
+
+h2 {
+  border-bottom: 2px solid $border-color;
+  padding-bottom: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+h3 {
+  border-bottom: 1px solid $border-color;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+// Responsive design amélioré
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .card {
+    padding: 1.5rem;
+  }
+  
+  .profile-avatar-container {
+    width: 8rem;
+    height: 8rem;
+    
+    i {
+      font-size: 3rem;
+    }
+  }
+  
+  .custom-button {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .grid {
+    gap: 1rem;
+  }
+  
+  h2 {
+    font-size: 1.25rem;
+  }
+  
+  h3 {
+    font-size: 1.125rem;
+  }
+}

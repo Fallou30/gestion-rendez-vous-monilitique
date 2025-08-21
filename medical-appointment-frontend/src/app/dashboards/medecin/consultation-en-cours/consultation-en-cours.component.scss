@@ -1,0 +1,170 @@
+.consultation-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.consultation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+
+  h3 {
+    color: #2c3e50;
+    margin: 0;
+    font-size: 1.4rem;
+
+    i {
+      margin-right: 10px;
+      color: #3498db;
+    }
+  }
+}
+
+.consultation-timer {
+  background-color: #f8f9fa;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: 500;
+
+  i {
+    margin-right: 5px;
+    color: #7f8c8d;
+  }
+}
+
+.consultation-form {
+  .form-section {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed #eee;
+
+    h4 {
+      color: #34495e;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+
+      i {
+        margin-right: 8px;
+        color: #3498db;
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #2c3e50;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+
+      &:focus {
+        border-color: #3498db;
+        outline: none;
+      }
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+  }
+
+  .vitals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+  }
+}
+
+.quick-actions {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.consultation-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  i {
+    font-size: 14px;
+  }
+
+  &-primary {
+    background-color: #3498db;
+    color: white;
+    border: none;
+
+    &:hover {
+      background-color: #2980b9;
+    }
+  }
+
+  &-secondary {
+    background-color: #95a5a6;
+    color: white;
+    border: none;
+
+    &:hover {
+      background-color: #7f8c8d;
+    }
+  }
+
+  &-outline-primary {
+    background-color: transparent;
+    color: #3498db;
+    border: 1px solid #3498db;
+
+    &:hover {
+      background-color: #f8f9fa;
+    }
+  }
+
+  &[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .vitals-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .quick-actions, .consultation-actions {
+    flex-direction: column;
+  }
+}

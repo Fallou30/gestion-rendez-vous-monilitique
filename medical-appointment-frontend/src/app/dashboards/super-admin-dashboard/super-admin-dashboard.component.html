@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Dashboard - SIG-H</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2d3748;
+        }
+
+        /* Navigation */
+        .dashboard-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .dashboard-nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: #2d3748;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .dashboard-nav-logo i {
+            font-size: 2rem;
+            color: #667eea;
+        }
+
+        .dashboard-nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .dashboard-nav-links a {
+            color: #4a5568;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dashboard-nav-links a:hover,
+        .dashboard-nav-links a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .dashboard-nav-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .dashboard-nav-user-profile {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .dashboard-nav-user-profile:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 0.5rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            min-width: 200px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .user-dropdown a,
+        .user-dropdown button {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #4a5568;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            background: none;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .user-dropdown a:hover,
+        .user-dropdown button:hover {
+            background: #f7fafc;
+            color: #667eea;
+        }
+
+        .user-dropdown .divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 0.5rem 0;
+        }
+
+        /* Dashboard Content */
+        .super-admin-dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-header i {
+            font-size: 2.5rem;
+        }
+
+        .stat-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .stat-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .stat-link:hover {
+            color: #5a67d8;
+            transform: translateX(5px);
+        }
+
+        /* Colors */
+        .blue { color: #3182ce; }
+        .green { color: #38a169; }
+        .red { color: #e53e3e; }
+        .yellow { color: #d69e2e; }
+        .purple { color: #805ad5; }
+
+        .icon-blue { color: #3182ce; }
+        .icon-green { color: #38a169; }
+        .icon-red { color: #e53e3e; }
+        .icon-yellow { color: #d69e2e; }
+        .icon-purple { color: #805ad5; }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .section-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-link:hover {
+            color: #5a67d8;
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .hover-row:hover {
+            background: #f7fafc;
+        }
+
+        .priority-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .priority-critical {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .priority-high {
+            background: #fef5e7;
+            color: #d69e2e;
+        }
+
+        /* Admin Actions */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .admin-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .admin-btn {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            border: none;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-btn i {
+            font-size: 2rem;
+            padding: 1rem;
+            border-radius: 12px;
+            background: #f7fafc;
+        }
+
+        .admin-btn.blue i {
+            background: #ebf8ff;
+            color: #3182ce;
+        }
+
+        .admin-btn.green i {
+            background: #f0fff4;
+            color: #38a169;
+        }
+
+        .admin-btn.purple i {
+            background: #faf5ff;
+            color: #805ad5;
+        }
+
+        .admin-btn h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+
+        .admin-btn p {
+            color: #718096;
+            font-size: 0.875rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .dashboard-nav-links {
+                display: none;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .super-admin-dashboard {
+                padding: 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+
+        .section-card {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .section-card:nth-child(1) { animation-delay: 0.4s; }
+        .section-card:nth-child(2) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="dashboard-nav">
+        <div class="dashboard-nav-content">
+            <a href="#" class="dashboard-nav-logo">
+                <i class="fas fa-hospital-alt"></i>
+                <span>SIG-H</span>
+            </a>
+            
+            <div class="dashboard-nav-links">
+                <a href="#" class="active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Tableau de bord
+                </a>
+                <a href="#">
+                    <i class="fas fa-building"></i>
+                    Établissements
+                </a>
+                <a href="/admin/users">
+                    <i class="fas fa-users-cog"></i>
+                    Utilisateurs
+                </a>
+                <a href="#">
+                    <i class="fas fa-shield-alt"></i>
+                    Sécurité
+                </a>
+                <a href="#">
+                    <i class="fas fa-chart-line"></i>
+                    Rapports
+                </a>
+                <a href="#">
+                    <i class="fas fa-cog"></i>
+                    Paramètres
+                </a>
+            </div>
+            
+            <div class="dashboard-nav-user">
+                <div class="dashboard-nav-user-profile" onclick="toggleUserMenu()">
+                    SA
+                </div>
+                <div class="user-dropdown" id="userDropdown" style="display: none;">
+                    <a href="profile">
+                        <i class="fas fa-user"></i>
+                        Mon profil
+                    </a>
+                    <a href="#">
+                        <i class="fas fa-cog"></i>
+                        Paramètres
+                    </a>
+                    <div class="divider"></div>
+                    <button onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Déconnexion
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Dashboard Content -->
+    <div class="super-admin-dashboard">
+        <div class="header">
+            <h1 class="title">
+                <i class="fas fa-shield-alt"></i>
+                Tableau de bord Super Administrateur
+            </h1>
+            <p class="subtitle">
+                <i class="fas fa-eye"></i>
+                Supervision complète du système de santé
+            </p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <i class="fas fa-hospital icon-blue"></i>
+                    <h3>Hôpitaux connectés</h3>
+                </div>
+                <p class="stat-value blue">247</p>
+                <a href="#" class="stat-link">
+                    <i class="fas fa-arrow-right"></i>
+                    Gérer les établissements
+                </a>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <i class="fas fa-users icon-green"></i>
+                    <h3>Utilisateurs actifs</h3>
+                </div>
+                <p class="stat-value green">12,847</p>
+                <a href="#" class="stat-link">
+                    <i class="fas fa-arrow-right"></i>
+                    Voir les détails
+                </a>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-header">
+                    <i class="fas fa-heartbeat icon-green"></i>
+                    <h3>État du système</h3>
+                </div>
+                <p class="stat-value green">Excellent</p>
+                <a href="#" class="stat-link">
+                    <i class="fas fa-arrow-right"></i>
+                    Surveillance détaillée
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Critical Issues -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-exclamation-triangle icon-red"></i>
+                        Alertes critiques
+                    </h2>
+                    <button class="btn-link">
+                        <i class="fas fa-external-link-alt"></i>
+                        Voir toutes les alertes
+                    </button>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> ID</th>
+                                <th><i class="fas fa-hospital"></i> Établissement</th>
+                                <th><i class="fas fa-align-left"></i> Description</th>
+                                <th><i class="fas fa-exclamation"></i> Priorité</th>
+                                <th><i class="fas fa-clock"></i> Depuis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover-row">
+                                <td>#2024-001</td>
+                                <td>CHU Marseille</td>
+                                <td>Serveur de base de données surchargé</td>
+                                <td>
+                                    <span class="priority-badge priority-critical">
+                                        <i class="fas fa-circle red"></i>
+                                        Critique
+                                    </span>
+                                </td>
+                                <td>2h 15min</td>
+                            </tr>
+                            <tr class="hover-row">
+                                <td>#2024-002</td>
+                                <td>Hôpital Saint-Louis</td>
+                                <td>Échec de sauvegarde automatique</td>
+                                <td>
+                                    <span class="priority-badge priority-high">
+                                        <i class="fas fa-circle yellow"></i>
+                                        Haute
+                                    </span>
+                                </td>
+                                <td>45min</td>
+                            </tr>
+                            <tr class="hover-row">
+                                <td>#2024-003</td>
+                                <td>Clinique Pasteur</td>
+                                <td>Connexion réseau instable</td>
+                                <td>
+                                    <span class="priority-badge priority-critical">
+                                        <i class="fas fa-circle red"></i>
+                                        Critique
+                                    </span>
+                                </td>
+                                <td>1h 30min</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Admin Actions -->
+            <div class="section-card">
+                <h2 class="section-title">
+                    <i class="fas fa-tools"></i>
+                    Administration système
+                </h2>
+                <div class="admin-actions">
+                    <button class="admin-btn blue">
+                        <i class="fas fa-users-cog"></i>
+                        <div>
+                            <h3>Gestion des rôles</h3>
+                            <p>Permissions et contrôles d'accès</p>
+                        </div>
+                    </button>
+                    <button class="admin-btn green">
+                        <i class="fas fa-shield-virus"></i>
+                        <div>
+                            <h3>Audit de sécurité</h3>
+                            <p>Vérification des vulnérabilités</p>
+                        </div>
+                    </button>
+                    <button class="admin-btn purple">
+                        <i class="fas fa-download"></i>
+                        <div>
+                            <h3>Mises à jour</h3>
+                            <p>Gestion des versions système</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function logout() {
+            alert('Déconnexion...');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const profile = document.querySelector('.dashboard-nav-user-profile');
+            
+            if (!profile.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

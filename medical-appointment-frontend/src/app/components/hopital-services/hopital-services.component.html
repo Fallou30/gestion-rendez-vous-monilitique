@@ -1,0 +1,94 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">
+            <button class="btn btn-sm btn-outline-secondary me-2" routerLink="/hopitaux">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            Services de l'hôpital: {{hopital?.nom}}
+          </h3>
+        </div>
+        
+        <div class="card-body">
+          <!-- Loading -->
+          <div *ngIf="loading" class="text-center">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Chargement...</span>
+            </div>
+          </div>
+
+          <!-- Informations sur l'hôpital -->
+          <div *ngIf="hopital && !loading" class="mb-4">
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Ville:</strong> {{hopital.ville}}</p>
+                <p><strong>Région:</strong> {{hopital.region}}</p>
+                <p><strong>Statut:</strong> 
+                  <span class="badge bg-{{getStatutColor(hopital.statut!)}}">
+                    {{hopital.statut}}
+                  </span>
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Contact:</strong></p>
+                <p *ngIf="hopital.telephone"><i class="fas fa-phone"></i> {{hopital.telephone}}</p>
+                <p *ngIf="hopital.email"><i class="fas fa-envelope"></i> {{hopital.email}}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Liste des services -->
+          <div *ngIf="!loading" class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead class="table-dark">
+                <tr>
+                  <th>Nom</th>
+                  <th>Description</th>
+                  <th>Emplacement</th>
+                  <th>Capacité</th>
+                  <th>Statut</th>
+                  <th>Contact</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let service of services">
+                  <td>
+                    <strong>{{service.nom}}</strong>
+                  </td>
+                  <td>{{service.description}}</td>
+                  <td>{{service.emplacement}}</td>
+                  <td>
+                    <span *ngIf="service.capacitePatientsJour">
+                      {{service.capacitePatientsJour}} patients/jour
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge bg-{{getStatutColor(service.statut!)}}">
+                      {{service.statut}}
+                    </span>
+                  </td>
+                  <td>
+                    <div *ngIf="service.telephone">
+                      <i class="fas fa-phone"></i> {{service.telephone}}
+                    </div>
+                    <div *ngIf="service.email">
+                      <i class="fas fa-envelope"></i> {{service.email}}
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Message si aucun service -->
+          <div *ngIf="!loading && services.length === 0" class="text-center py-4">
+            <i class="fas fa-procedures fa-3x text-muted mb-3"></i>
+            <p class="text-muted">Aucun service trouvé pour cet hôpital.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

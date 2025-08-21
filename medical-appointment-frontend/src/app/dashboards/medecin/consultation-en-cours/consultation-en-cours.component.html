@@ -1,0 +1,223 @@
+<div class="consultation-container">
+      <div class="consultation-header">
+        <h3><i class="fas fa-stethoscope"></i> Consultation en cours</h3>
+        <div class="consultation-timer">
+          <i class="fas fa-clock"></i>
+          <span>{{ formatTime(startTime) }} - {{ getCurrentTime() }}</span>
+        </div>
+      </div>
+
+      <form [formGroup]="consultationForm" class="consultation-form">
+        
+        <!-- Motif de consultation -->
+        <div class="form-section">
+          <h4><i class="fas fa-clipboard-list"></i> Motif de consultation</h4>
+          <div class="form-group">
+            <label for="motifConsultation">Motif principal *</label>
+            <textarea
+              id="motifConsultation"
+              formControlName="motifConsultation"
+              rows="3"
+              placeholder="Décrivez le motif de la consultation..."
+              class="form-control">
+            </textarea>
+          </div>
+        </div>
+
+        <!-- Anamnèse -->
+        <div class="form-section">
+          <h4><i class="fas fa-history"></i> Anamnèse</h4>
+          <div class="form-group">
+            <label for="symptomes">Symptômes et historique</label>
+            <textarea
+              id="symptomes"
+              formControlName="symptomes"
+              rows="4"
+              placeholder="Décrivez les symptômes, leur évolution, les antécédents récents..."
+              class="form-control">
+            </textarea>
+          </div>
+        </div>
+
+        <!-- Signes vitaux -->
+        <div class="form-section">
+          <h4><i class="fas fa-heartbeat"></i> Signes vitaux</h4>
+          <div class="vitals-grid">
+            <div class="form-group">
+              <label for="tension">Tension artérielle</label>
+              <input
+                type="text"
+                id="tension"
+                formControlName="tension"
+                placeholder="120/80"
+                class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="pouls">Pouls (bpm)</label>
+              <input
+                type="number"
+                id="pouls"
+                formControlName="pouls"
+                placeholder="72"
+                class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="temperature">Température (°C)</label>
+              <input
+                type="number"
+                id="temperature"
+                formControlName="temperature"
+                step="0.1"
+                placeholder="36.5"
+                class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="poids">Poids (kg)</label>
+              <input
+                type="number"
+                id="poids"
+                formControlName="poids"
+                placeholder="70"
+                class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="taille">Taille (cm)</label>
+              <input
+                type="number"
+                id="taille"
+                formControlName="taille"
+                placeholder="175"
+                class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="saturation">Saturation O2 (%)</label>
+              <input
+                type="number"
+                id="saturation"
+                formControlName="saturation"
+                placeholder="98"
+                class="form-control">
+            </div>
+          </div>
+        </div>
+
+        <!-- Examen clinique -->
+        <div class="form-section">
+          <h4><i class="fas fa-search"></i> Examen clinique</h4>
+          <div class="form-group">
+            <label for="examenClinique">Observation et examen physique</label>
+            <textarea
+              id="examenClinique"
+              formControlName="examenClinique"
+              rows="4"
+              placeholder="Décrivez l'examen clinique, les observations physiques..."
+              class="form-control">
+            </textarea>
+          </div>
+        </div>
+
+        <!-- Diagnostic -->
+        <div class="form-section">
+          <h4><i class="fas fa-diagnoses"></i> Diagnostic</h4>
+          <div class="form-group">
+            <label for="diagnostic">Diagnostic principal *</label>
+            <input
+              type="text"
+              id="diagnostic"
+              formControlName="diagnostic"
+              placeholder="Diagnostic principal..."
+              class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="diagnosticsSecondaires">Diagnostics secondaires</label>
+            <textarea
+              id="diagnosticsSecondaires"
+              formControlName="diagnosticsSecondaires"
+              rows="2"
+              placeholder="Diagnostics secondaires ou différentiels..."
+              class="form-control">
+            </textarea>
+          </div>
+        </div>
+
+        <!-- Plan de traitement -->
+        <div class="form-section">
+          <h4><i class="fas fa-pills"></i> Plan de traitement</h4>
+          <div class="form-group">
+            <label for="planTraitement">Traitement prescrit</label>
+            <textarea
+              id="planTraitement"
+              formControlName="planTraitement"
+              rows="4"
+              placeholder="Décrivez le plan de traitement, les médicaments, les recommandations..."
+              class="form-control">
+            </textarea>
+          </div>
+        </div>
+
+        <!-- Observations -->
+        <div class="form-section">
+          <h4><i class="fas fa-notes-medical"></i> Observations et recommandations</h4>
+          <div class="form-group">
+            <label for="observations">Notes complémentaires</label>
+            <textarea
+              id="observations"
+              formControlName="observations"
+              rows="3"
+              placeholder="Observations particulières, recommandations au patient..."
+              class="form-control">
+            </textarea>
+          </div>
+        </div>
+
+        <!-- Suivi -->
+        <div class="form-section">
+          <h4><i class="fas fa-calendar-plus"></i> Suivi</h4>
+          <div class="form-group">
+            <label for="prochainRendezVous">Prochain rendez-vous</label>
+            <input
+              type="date"
+              id="prochainRendezVous"
+              formControlName="prochainRendezVous"
+              class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="recommandationsSuivi">Recommandations de suivi</label>
+            <textarea
+              id="recommandationsSuivi"
+              formControlName="recommandationsSuivi"
+              rows="2"
+              placeholder="Recommandations pour le suivi..."
+              class="form-control">
+            </textarea>
+          </div>
+        </div>
+      </form>
+
+      <!-- Actions rapides -->
+      <div class="quick-actions">
+        <button type="button" (click)="ajouterPrescription()" class="btn btn-primary">
+          <i class="fas fa-prescription"></i> Ajouter prescription
+        </button>
+        <button type="button" (click)="demanderExamen()" class="btn btn-secondary">
+          <i class="fas fa-vial"></i> Demander examen
+        </button>
+        <button type="button" (click)="genererRapport()" class="btn btn-info">
+          <i class="fas fa-file-medical"></i> Générer rapport
+        </button>
+      </div>
+
+      <!-- Actions principales -->
+      <div class="consultation-actions">
+        <button type="button" (click)="sauvegarderBrouillon()" class="btn btn-outline-primary">
+          <i class="fas fa-save"></i> Sauvegarder brouillon
+        </button>
+        <button type="button" (click)="terminerConsultation()" class="btn btn-success" 
+                [disabled]="!consultationForm.valid">
+          <i class="fas fa-check"></i> Terminer consultation
+        </button>
+        <button type="button" (click)="annulerConsultation()" class="btn btn-outline-danger">
+          <i class="fas fa-times"></i> Annuler
+        </button>
+      </div>
+</div>

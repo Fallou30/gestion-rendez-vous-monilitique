@@ -1,0 +1,90 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h2>Connexion à votre compte</h2>
+      <p>Accédez à votre espace personnel</p>
+    </div>
+    
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input 
+          id="email"
+          name="email"
+          type="email"
+          formControlName="email"
+          required
+          placeholder="Adresse email"
+          [class.input-error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+        />
+        <div *ngIf="loginForm.get('email')?.errors?.['required'] && loginForm.get('email')?.touched" 
+             class="error-message">
+          <i class="fas fa-exclamation-circle"></i> L'email est requis
+        </div>
+        <div *ngIf="loginForm.get('email')?.errors?.['email'] && loginForm.get('email')?.touched" 
+             class="error-message">
+          <i class="fas fa-exclamation-circle"></i> Format d'email invalide
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Mot de passe *</label>
+        <div class="password-input">
+          <input 
+            id="password"
+            name="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="motDePasse"
+            required
+            placeholder="Mot de passe"
+            [class.input-error]="loginForm.get('motDePasse')?.invalid && loginForm.get('motDePasse')?.touched"
+          />
+          <button type="button" (click)="togglePasswordVisibility()" class="toggle-password">
+            <i [class]="showPassword ? 'far fa-eye-slash' : 'far fa-eye'"></i>
+          </button>
+        </div>
+        <div *ngIf="loginForm.get('motDePasse')?.errors?.['required'] && loginForm.get('motDePasse')?.touched" 
+             class="error-message">
+          <i class="fas fa-exclamation-circle"></i> Le mot de passe est requis
+        </div>
+      </div>
+
+      <div class="form-options">
+        <div class="remember-me">
+          <input 
+            id="show-password"
+            name="show-password"
+            type="checkbox"
+            (change)="togglePasswordVisibility()"
+            class="custom-checkbox"
+          />
+          <label for="show-password">Afficher le mot de passe</label>
+        </div>
+
+        <a routerLink="/auth/forgot-password" class="forgot-password">Mot de passe oublié ?</a>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message global-error">
+        <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+      </div>
+
+       <button 
+        type="submit"
+        [disabled]="loginForm.invalid || isLoading"
+        class="submit-button"
+        aria-label="Se connecter"
+      >
+        <span *ngIf="isLoading" class="spinner"></span>
+        {{ isLoading ? 'Connexion en cours...' : 'Se connecter' }}
+      </button>
+    <div class="register-link">
+    <p>
+        Pas encore de compte ? Patient 
+        <a routerLink="/auth/register/patient" class="register-link" aria-label="S'inscrire en tant que patient" style="cursor: pointer; text-decoration: underline;">
+        S'inscrire
+        </a>
+    </p>
+    </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="container mt-3">
+  <h2>Liste des services {{ hopitalId ? 'de l\'hôpital #' + hopitalId : '' }}</h2>
+  
+  <button class="btn btn-primary mb-3" (click)="addService()">
+    Ajouter un service
+  </button>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Description</th>
+        <th>Capacité/jour</th>
+        <th>Statut</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let service of services">
+        <td>{{ service.nom }}</td>
+        <td>{{ service.description }}</td>
+        <td>{{ service.capacitePatientsJour || '-' }}</td>
+        <td>{{ service.statut }}</td>
+        <td>
+          <button class="btn btn-sm btn-info me-2" (click)="editService(service.idService!)">
+            Modifier
+          </button>
+          <button class="btn btn-sm btn-danger" (click)="deleteService(service.idService!)">
+            Supprimer
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="loading" class="text-center">
+    <span class="spinner-border spinner-border-sm"></span> Chargement...
+  </div>
+
+  <div *ngIf="!loading && services.length === 0" class="alert alert-info">
+    Aucun service trouvé.
+  </div>
+</div>

@@ -1,0 +1,372 @@
+<app-dashboard-nav [currentRole]="userType"></app-dashboard-nav>
+<div *ngIf="isLoading" class="loading-overlay">
+  <div class="spinner">
+    <i class="fas fa-heartbeat"></i>
+    <p>Chargement du dashboard...</p>
+  </div>
+</div>
+
+<!-- Erreur -->
+<div *ngIf="error" class="error-container">
+  <i class="fas fa-exclamation-triangle"></i>
+  <h3>Erreur</h3>
+  <p>{{ error }}</p>
+  <button (click)="refreshDashboard()" class="btn btn-primary">
+    <i class="fas fa-sync-alt"></i> Réessayer
+  </button>
+</div>
+
+<!-- Dashboard Principal -->
+<div *ngIf="!isLoading && !error" class="dashboard-container">
+  
+  <!-- En-tête du dashboard -->
+  <div class="dashboard-header">
+    <div class="welcome-section">
+      <h1><i class="fas fa-user-md"></i> Tableau de bord médecin</h1>
+      <p>Bienvenue, Dr. Martin -{{ dateActuelle }}</p>
+    </div>
+    
+    <div class="header-actions">
+      <button (click)="refreshDashboard()" class="btn btn-outline">
+        <i class="fas fa-sync-alt"></i> Actualiser
+      </button>
+    
+        <button (click)="voirCalendrierComplet()" class="btn btn-primary" data-tooltip="Voir le calendrier complet">
+        <i class="fas fa-calendar-alt"></i> Calendrier
+      </button>
+  
+    </div>
+  </div>
+
+  <!-- Statistiques rapides -->
+  <div class="stats-cards">
+    <div class="stat-card consultations">
+      <div class="stat-icon">
+        <i class="fas fa-stethoscope"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ nombreConsultationsJour || 0 }}</h3>
+        <p>Consultations aujourd'hui</p>
+      </div>
+    </div>
+    
+    <div class="stat-card waiting-time">
+      <div class="stat-icon">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ tempsAttenteMoyen}}min</h3>
+        <p>Temps d'attente moyen</p>
+      </div>
+    </div>
+    
+    <div class="stat-card satisfaction">
+      <div class="stat-icon">
+        <i class="fas fa-star"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ tauxSatisfaction ? (tauxSatisfaction + '/5') : 'N/A' }}</h3>
+        <p>Satisfaction patients</p>
+      </div>
+    </div>
+
+    <div class="stat-card urgent">
+      <div class="stat-icon">
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ examensUrgents.length }}</h3>
+        <p>Examens urgents</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="dashboard-main">
+    
+    <!-- Colonne gauche -->
+    <div class="dashboard-left">
+      
+      <!-- Prochain rendez-vous -->
+      <div class="card next-appointment" *ngIf="prochainRendezVous">
+        <div class="card-header">
+          <h3><i class="fas fa-calendar-check"></i> Prochain rendez-vous</h3>
+        </div>
+        <div class="card-body">
+          <div class="appointment-info">
+            <div class="patient-info">
+              <i class="fas fa-user-circle"></i>
+              <div>
+                <h4>{{ prochainRendezVous.nomPatient }}</h4>
+                <p>{{ prochainRendezVous.typeConsultation }}</p>
+              </div>
+            </div>
+            <div class="appointment-time">
+              <i class="fas fa-clock"></i>
+              <span>{{ formatTime(prochainRendezVous.dateHeureDebut) }}</span>
+            </div>
+          </div>
+          <div class="appointment-actions">
+            <button (click)="commencerConsultation(prochainRendezVous.id)" 
+                    class="btn btn-success">
+              <i class="fas fa-play"></i> Commencer
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rendez-vous du jour -->
+      <div class="card appointments-today">
+        <div class="card-header">
+          <h3><i class="fas fa-calendar-day"></i> Rendez-vous du jour</h3>
+          <span class="badge">{{ rendezVousDuJour.length }}</span>
+        </div>
+        <div class="card-body">
+          <div class="appointments-list">
+            <div *ngFor="let rdv of rendezVousDuJour" 
+                 class="appointment-item"
+                 [class]="getStatutClass(rdv.statut)">
+              
+              <div class="appointment-time">
+                <i class="fas fa-clock"></i>
+                <span>{{ formatTime(rdv.dateHeureDebut) }}</span>
+              </div>
+              
+              <div class="appointment-patient">
+                <i class="fas fa-user"></i>
+                <div>
+                  <h5>{{ rdv.nomPatient }}</h5>
+                  <p>{{ rdv.typeConsultation }}</p>
+                </div>
+              </div>
+              
+              <div class="appointment-status">
+                <span class="status-badge" [class]="getStatutClass(rdv.statut)">
+                  {{ rdv.statut }}
+                </span>
+              </div>
+              
+              <div class="appointment-actions">
+                <button *ngIf="rdv.statut === 'PROGRAMME'" 
+                        (click)="confirmerRendezVous(rdv.id)"
+                        class="btn-action confirm">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button *ngIf="rdv.statut === 'CONFIRME'" 
+                        (click)="commencerConsultation(rdv.id)"
+                        class="btn-action start">
+                  <i class="fas fa-play"></i>
+                </button>
+                <button *ngIf="rdv.statut === 'EN_COURS'" 
+                        (click)="terminerConsultation(rdv.id)"
+                        class="btn-action finish">
+                  <i class="fas fa-stop"></i>
+                </button>
+                <button (click)="ouvrirSuiviPatient(rdv.patient)" 
+                        class="btn-action info">
+                  <i class="fas fa-info-circle"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne droite -->
+    <div class="dashboard-right">
+      
+      <!-- Examens urgents -->
+      <div class="card urgent-exams" *ngIf="examensUrgents.length > 0">
+        <div class="card-header urgent">
+          <h3><i class="fas fa-exclamation-triangle"></i> Examens urgents</h3>
+        </div>
+        <div class="card-body">
+          <div class="exam-list">
+            <div *ngFor="let examen of examensUrgents" class="exam-item urgent">
+              <div class="exam-info">
+                <i class="fas fa-microscope"></i>
+                <div>
+                  <h5>{{ examen.nomExamen }}</h5>
+                  <p>{{ examen.nomPatient }}</p>
+                </div>
+              </div>
+              <div class="exam-priority">
+                <i class="fas fa-fire"></i>
+                <span>URGENT</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Examens en attente -->
+      <div class="card pending-exams">
+        <div class="card-header">
+          <h3><i class="fas fa-flask"></i> Examens en attente</h3>
+          <span class="badge">{{ examensEnAttente.length }}</span>
+        </div>
+        <div class="card-body">
+          <div class="exam-list">
+            <div *ngFor="let examen of examensEnAttente" class="exam-item">
+              <div class="exam-info">
+                <i class="fas fa-vial"></i>
+                <div>
+                  <h5>{{ examen.nomExamen }}</h5>
+                  <p>{{ examen.nomPatient }}</p>
+                </div>
+              </div>
+              <div class="exam-date">
+                <i class="fas fa-calendar"></i>
+                <span>{{ formatDate(examen.dateRealisation) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Graphique des consultations -->
+      <div class="card stats-chart">
+        <div class="card-header">
+          <h3><i class="fas fa-chart-line"></i> Activité de la semaine</h3>
+        </div>
+        <div class="card-body">
+          <div class="chart-container">
+            <!-- Graphique simple avec CSS -->
+            <div class="chart-bars">
+              <div class="chart-bar" style="height: 60%">
+                <span class="bar-label">Lun</span>
+                <span class="bar-value">12</span>
+              </div>
+              <div class="chart-bar" style="height: 80%">
+                <span class="bar-label">Mar</span>
+                <span class="bar-value">16</span>
+              </div>
+              <div class="chart-bar" style="height: 45%">
+                <span class="bar-label">Mer</span>
+                <span class="bar-value">9</span>
+              </div>
+              <div class="chart-bar" style="height: 90%">
+                <span class="bar-label">Jeu</span>
+                <span class="bar-value">18</span>
+              </div>
+              <div class="chart-bar" style="height: 70%">
+                <span class="bar-label">Ven</span>
+                <span class="bar-value">14</span>
+              </div>
+              <div class="chart-bar" style="height: 30%">
+                <span class="bar-label">Sam</span>
+                <span class="bar-value">6</span>
+              </div>
+              <div class="chart-bar" style="height: 20%">
+                <span class="bar-label">Dim</span>
+                <span class="bar-value">4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de suivi patient -->
+<div class="modal-overlay" *ngIf="patientSelectionne" (click)="fermerSuiviPatient()">
+  <div class="modal-content patient-modal" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h3><i class="fas fa-user-injured"></i> Suivi du patient</h3>
+      <button (click)="fermerSuiviPatient()" class="btn-close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- Informations patient -->
+      <div class="patient-info-header">
+        <div class="patient-avatar">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <div class="patient-details">
+          <h4>{{ patientSelectionne.nom }} {{ patientSelectionne.prenom }}</h4>
+          <p><i class="fas fa-calendar"></i> {{ patientSelectionne.dateNaissance }}</p>
+          <p><i class="fas fa-id-card"></i> {{ patientSelectionne.numeroSecuriteSociale }}</p>
+        </div>
+      </div>
+
+      <!-- Onglets -->
+      <div class="tabs">
+        <button class="tab-button" 
+                [class.active]="activeTab === 'consultations'"
+                (click)="activeTab = 'consultations'">
+          <i class="fas fa-stethoscope"></i> Consultations
+        </button>
+        <button class="tab-button" 
+                [class.active]="activeTab === 'examens'"
+                (click)="activeTab = 'examens'">
+          <i class="fas fa-microscope"></i> Examens
+        </button>
+        <button class="tab-button" 
+                [class.active]="activeTab === 'prescriptions'"
+                (click)="activeTab = 'prescriptions'">
+          <i class="fas fa-pills"></i> Prescriptions
+        </button>
+      </div>
+
+      <!-- Contenu des onglets -->
+      <div class="tab-content">
+        
+        <!-- Consultations -->
+        <div *ngIf="activeTab === 'consultations'" class="tab-pane">
+          <div class="consultations-list">
+            <div *ngFor="let consultation of consultationsPatient" class="consultation-item">
+              <div class="consultation-date">
+                <i class="fas fa-calendar"></i>
+                <span>{{ formatDate(consultation.dateConsultation) }}</span>
+              </div>
+              <div class="consultation-details">
+                <h5>{{ consultation.diagnostic }}</h5>
+                <p>{{ consultation.observations }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Examens -->
+        <div *ngIf="activeTab === 'examens'" class="tab-pane">
+          <div class="examens-list">
+            <div *ngFor="let examen of examensPatient" class="examen-item">
+              <div class="examen-type">
+                <i class="fas fa-vial"></i>
+                <div>
+                  <h5>{{ examen.nomExamen }}</h5>
+                  <p>{{ examen.typeExamen }}</p>
+                </div>
+              </div>
+              <div class="examen-status">
+                <span class="status-badge" [class]="getStatutClass(examen.statut)">
+                  {{ examen.statut }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Prescriptions -->
+        <div *ngIf="activeTab === 'prescriptions'" class="tab-pane">
+          <div class="prescriptions-list">
+            <div *ngFor="let prescription of prescriptionsPatient" class="prescription-item">
+              <div class="prescription-info">
+                <i class="fas fa-prescription-bottle"></i>
+                <div>
+                  <h5>Prescription du {{ formatDate(prescription.dateCreation) }}</h5>
+                  <p>{{ prescription.instructionsGenerales }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

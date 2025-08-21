@@ -1,0 +1,218 @@
+.dossier-medical-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.dossier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+
+  h3 {
+    color: #2c3e50;
+    margin: 0;
+    font-size: 1.4rem;
+
+    i {
+      margin-right: 10px;
+      color: #3498db;
+    }
+  }
+}
+
+.dossier-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.dossier-form {
+  .form-section {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed #eee;
+
+    h4 {
+      color: #34495e;
+      margin-bottom: 15px;
+      font-size: 1.1rem;
+
+      i {
+        margin-right: 8px;
+        color: #3498db;
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #2c3e50;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+
+      &[readonly] {
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+      }
+
+      &:focus {
+        border-color: #3498db;
+        outline: none;
+      }
+    }
+
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+  }
+}
+
+.historique-section, .documents-section {
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+
+  h4 {
+    color: #34495e;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+
+    i {
+      margin-right: 8px;
+      color: #3498db;
+    }
+  }
+}
+
+.consultations-list, .documents-list {
+  margin-top: 15px;
+}
+
+.consultation-item, .document-item {
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border-left: 4px solid #3498db;
+}
+
+.document-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  .modal-content {
+    background-color: white;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Styles pour les statuts */
+.statut-actif {
+  color: #27ae60;
+}
+.statut-archive {
+  color: #e74c3c;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dossier-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .dossier-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+.document-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #e9ecef;
+    transform: translateX(2px);
+  }
+}
+
+.document-info {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+
+  i {
+    font-size: 1.5rem;
+    margin-right: 12px;
+    color: #6c757d;
+  }
+}
+
+.document-details {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  .document-name {
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .document-type, .document-size, .document-date {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-right: 8px;
+    display: inline-block;
+  }
+}
+
+.document-actions {
+  display: flex;
+  gap: 6px;
+
+  .btn {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+}

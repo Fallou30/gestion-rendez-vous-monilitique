@@ -1,0 +1,343 @@
+<div class="medecin-demande-container">
+  <div class="max-w-4xl mx-auto px-4">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+        <i class="ff ff-medical-id"></i> Demande d'inscription - Médecin
+      </h1>
+
+      <!-- Messages -->
+      <div *ngIf="message" class="message-alert" [ngClass]="messageType">
+        <i [class]="getMessageIcon()"></i>
+        {{ message }}
+      </div>
+
+      <form [formGroup]="demandeForm" (ngSubmit)="onSubmit()" class="form-space">
+        <!-- Informations personnelles -->
+        <div class="form-section">
+          <h2 class="section-title">
+            <i class="ff ff-user"></i> Informations personnelles
+          </h2>
+
+          <div class="grid-form">
+            <!-- Nom -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-user-circle"></i> Nom <span class="required">*</span>
+              </label>
+              <input type="text" formControlName="nom"
+                [class.invalid]="demandeForm.get('nom')?.invalid && demandeForm.get('nom')?.touched">
+              <div *ngIf="demandeForm.get('nom')?.invalid && demandeForm.get('nom')?.touched" class="error-message">
+                Le nom est requis
+              </div>
+            </div>
+
+            <!-- Prénom -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-user-circle"></i> Prénom <span class="required">*</span>
+              </label>
+              <input type="text" formControlName="prenom"
+                [class.invalid]="demandeForm.get('prenom')?.invalid && demandeForm.get('prenom')?.touched">
+              <div *ngIf="demandeForm.get('prenom')?.invalid && demandeForm.get('prenom')?.touched"
+                class="error-message">
+                Le prénom est requis
+              </div>
+            </div>
+            <!-- Sexe -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-user-md"></i> Sexe <span class="required">*</span>
+              </label>
+              <select formControlName="sexe"
+                [class.invalid]="demandeForm.get('sexe')?.invalid && demandeForm.get('sexe')?.touched">
+                <option value="">Sélectionnez le sexe</option>
+                <option value="HOMME">Homme</option>
+                <option value="FEMME">Femme</option>
+              </select>
+              <div *ngIf="demandeForm.get('sexe')?.invalid && demandeForm.get('sexe')?.touched" class="error-message">
+                Le sexe est requis
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-email"></i> Email <span class="required">*</span>
+              </label>
+              <input type="email" formControlName="email"
+                [class.invalid]="demandeForm.get('email')?.invalid && demandeForm.get('email')?.touched">
+              <div *ngIf="demandeForm.get('email')?.invalid && demandeForm.get('email')?.touched" class="error-message">
+                Email valide requis
+              </div>
+            </div>
+
+            <!-- Téléphone -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-phone"></i> Téléphone <span class="required">*</span>
+              </label>
+              <input type="tel" formControlName="telephone"
+                [class.invalid]="demandeForm.get('telephone')?.invalid && demandeForm.get('telephone')?.touched">
+              <div *ngIf="demandeForm.get('telephone')?.invalid && demandeForm.get('telephone')?.touched"
+                class="error-message">
+                Le téléphone est requis
+              </div>
+            </div>
+
+            <!-- Date de naissance -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-calendar"></i> Date de naissance <span class="required">*</span>
+              </label>
+              <input type="date" formControlName="dateNaissance"
+                [class.invalid]="demandeForm.get('dateNaissance')?.invalid && demandeForm.get('dateNaissance')?.touched">
+              <div *ngIf="demandeForm.get('dateNaissance')?.invalid && demandeForm.get('dateNaissance')?.touched"
+                class="error-message">
+                La date de naissance est requise
+              </div>
+            </div>
+            <!-- Lieu de naissance -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-location"></i> Lieu de naissance <span class="required">*</span>
+              </label>
+              <input type="text" formControlName="lieuNaissance"
+                [class.invalid]="demandeForm.get('lieuNaissance')?.invalid && demandeForm.get('lieuNaissance')?.touched">
+              <div *ngIf="demandeForm.get('lieuNaissance')?.invalid && demandeForm.get('lieuNaissance')?.touched"
+                class="error-message">
+                Le lieu de naissance est requis
+              </div>
+            </div>
+
+            <!-- Adresse -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-location"></i> Adresse <span class="required">*</span>
+              </label>
+              <input type="text" formControlName="adresse"
+                [class.invalid]="demandeForm.get('adresse')?.invalid && demandeForm.get('adresse')?.touched">
+              <div *ngIf="demandeForm.get('adresse')?.invalid && demandeForm.get('adresse')?.touched"
+                class="error-message">
+                L'adresse est requise
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informations professionnelles -->
+        <div class="form-section">
+          <h2 class="section-title">
+            <i class="ff ff-briefcase"></i> Informations professionnelles
+          </h2>
+
+          <div class="grid-form">
+            <!-- Matricule -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-hashtag"></i> Matricule <span class="required">*</span>
+              </label>
+              <input type="text" formControlName="matricule"
+                [class.invalid]="demandeForm.get('matricule')?.invalid && demandeForm.get('matricule')?.touched">
+              <div *ngIf="demandeForm.get('matricule')?.invalid && demandeForm.get('matricule')?.touched"
+                class="error-message">
+                Le matricule est requis (lettres et chiffres uniquement)
+              </div>
+            </div>
+
+            <!-- Numéro d'ordre -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-id-card"></i> Numéro d'ordre <span class="required">*</span>
+              </label>
+              <input type="text" formControlName="numeroOrdre"
+                [class.invalid]="demandeForm.get('numeroOrdre')?.invalid && demandeForm.get('numeroOrdre')?.touched">
+              <div *ngIf="demandeForm.get('numeroOrdre')?.invalid && demandeForm.get('numeroOrdre')?.touched"
+                class="error-message">
+                Le numéro d'ordre est requis
+              </div>
+            </div>
+
+            <!-- Spécialité -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-stethoscope"></i> Spécialité <span class="required">*</span>
+              </label>
+              <input type="text" formControlName="specialite"
+                [class.invalid]="demandeForm.get('specialite')?.invalid && demandeForm.get('specialite')?.touched">
+              <div *ngIf="demandeForm.get('specialite')?.invalid && demandeForm.get('specialite')?.touched"
+                class="error-message">
+                La spécialité est requise
+              </div>
+            </div>
+
+            <!-- Titre -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-graduation-cap"></i> Titre
+              </label>
+              <input type="text" formControlName="titre" placeholder="Dr., Pr., etc.">
+            </div>
+
+            <!-- Expérience -->
+            <div class="form-group">
+              <label>
+                <i class="ff ff-clock"></i> Expérience (années)
+              </label>
+              <input type="number" formControlName="experience" min="0" max="50">
+            </div>
+
+            <!-- Hôpital -->
+            <div class="form-group md:col-span-2">
+              <label>
+                <i class="ff ff-hospital"></i> Hôpital <span class="required">*</span>
+              </label>
+              <select formControlName="idHopital"
+                [class.invalid]="demandeForm.get('idHopital')?.invalid && demandeForm.get('idHopital')?.touched">
+                <option value="">Sélectionnez un hôpital</option>
+                <option *ngFor="let hopital of hopitaux" [value]="hopital.idHopital">
+                  {{ hopital.nom }} - {{ hopital.ville }}
+                </option>
+              </select>
+              <div *ngIf="demandeForm.get('idHopital')?.invalid && demandeForm.get('idHopital')?.touched"
+                class="error-message">
+                L'hôpital est requis
+              </div>
+            </div>
+          </div>
+          <!-- Service -->
+          <div class="form-group md:col-span-2">
+            <label>
+              <i class="ff ff-briefcase-medical"></i> Service <span class="required">*</span>
+            </label>
+            <select formControlName="idService"
+              [class.invalid]="demandeForm.get('idService')?.invalid && demandeForm.get('idService')?.touched">
+              <option value="">Sélectionnez un service</option>
+              <option *ngFor="let service of services" [value]="service.idService">
+                {{ service.nom }}
+              </option>
+            </select>
+            <div *ngIf="demandeForm.get('idService')?.invalid && demandeForm.get('idService')?.touched"
+              class="error-message">
+              Le service est requis
+            </div>
+          </div>
+
+
+          <!-- Biographie -->
+          <div class="form-group">
+            <label>
+              <i class="ff ff-edit"></i> Biographie
+            </label>
+            <textarea formControlName="biographie" rows="4" placeholder="Décrivez votre parcours professionnel...">
+            </textarea>
+          </div>
+        </div>
+
+        <!-- Documents -->
+        <div class="form-section">
+          <h2 class="section-title">
+            <i class="ff ff-folder"></i> Documents justificatifs
+          </h2>
+
+          <div class="documents-space">
+            <!-- Diplôme -->
+            <div class="document-group">
+              <label>
+                <i class="ff ff-file-certificate"></i> Diplôme de médecine <span class="required">*</span>
+              </label>
+              <div class="file-upload-container">
+                <input type="file" #diplomeInput (change)="onFileSelect($event, 'diplome')"
+                  accept=".pdf,.jpg,.jpeg,.png" class="hidden">
+                <button type="button" (click)="diplomeInput.click()" class="upload-button">
+                  <i class="ff ff-upload"></i> Choisir fichier
+                </button>
+                <span *ngIf="selectedFiles.diplome" class="file-name">
+                  {{ selectedFiles.diplome.name }}
+                </span>
+              </div>
+              <div *ngIf="uploadProgress.diplome > 0" class="progress-bar-container">
+                <div class="progress-bar" [style.width.%]="uploadProgress.diplome"></div>
+              </div>
+            </div>
+
+            <!-- Carte d'ordre -->
+            <div class="document-group">
+              <label>
+                <i class="ff ff-id-card"></i> Carte d'ordre des médecins <span class="required">*</span>
+              </label>
+              <div class="file-upload-container">
+                <input type="file" #carteOrdreInput (change)="onFileSelect($event, 'carteOrdre')"
+                  accept=".pdf,.jpg,.jpeg,.png" class="hidden">
+                <button type="button" (click)="carteOrdreInput.click()" class="upload-button">
+                  <i class="ff ff-upload"></i> Choisir fichier
+                </button>
+                <span *ngIf="selectedFiles.carteOrdre" class="file-name">
+                  {{ selectedFiles.carteOrdre.name }}
+                </span>
+              </div>
+              <div *ngIf="uploadProgress.carteOrdre > 0" class="progress-bar-container">
+                <div class="progress-bar" [style.width.%]="uploadProgress.carteOrdre"></div>
+              </div>
+            </div>
+
+            <!-- CV -->
+            <div class="document-group">
+              <label>
+                <i class="ff ff-file-user"></i> CV
+              </label>
+              <div class="file-upload-container">
+                <input type="file" #cvInput (change)="onFileSelect($event, 'cv')" accept=".pdf,.jpg,.jpeg,.png"
+                  class="hidden">
+                <button type="button" (click)="cvInput.click()" class="upload-button">
+                  <i class="ff ff-upload"></i> Choisir fichier
+                </button>
+                <span *ngIf="selectedFiles.cv" class="file-name">
+                  {{ selectedFiles.cv.name }}
+                </span>
+              </div>
+              <div *ngIf="uploadProgress.cv > 0" class="progress-bar-container">
+                <div class="progress-bar" [style.width.%]="uploadProgress.cv"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Motif de demande -->
+        <div class="form-section">
+          <h2 class="section-title">
+            <i class="ff ff-question-circle"></i> Motif de la demande
+          </h2>
+
+          <div class="form-group">
+            <label>
+              <i class="ff ff-edit"></i> Expliquez votre motivation <span class="required">*</span>
+            </label>
+            <textarea formControlName="motifDemande" rows="4"
+              [class.invalid]="demandeForm.get('motifDemande')?.invalid && demandeForm.get('motifDemande')?.touched"
+              placeholder="Décrivez pourquoi vous souhaitez rejoindre notre plateforme...">
+            </textarea>
+            <div *ngIf="demandeForm.get('motifDemande')?.invalid && demandeForm.get('motifDemande')?.touched"
+              class="error-message">
+              Le motif de la demande est requis
+            </div>
+          </div>
+        </div>
+
+        <!-- Boutons -->
+        <div class="form-actions">
+          <button type="button" (click)="resetForm()" class="secondary-button">
+            <i class="ff ff-refresh"></i> Réinitialiser
+          </button>
+          <button type="submit" [disabled]="demandeForm.invalid || isSubmitting" class="primary-button">
+            <span *ngIf="isSubmitting" class="spinner">
+              <i class="ff ff-spinner ff-spin"></i>
+            </span>
+            <span *ngIf="!isSubmitting">
+              <i class="ff ff-send"></i> Soumettre la demande
+            </span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

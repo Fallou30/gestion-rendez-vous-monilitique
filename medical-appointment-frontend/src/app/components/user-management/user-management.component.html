@@ -1,0 +1,138 @@
+<!-- src/app/components/user-management/user-management.component.html -->
+<div class="user-management">
+  <div class="container">
+    <div class="card">
+      <h2 class="title">Gestion des Utilisateurs</h2>
+
+      <!-- Filtres -->
+      <div class="filters">
+        <div class="filter-group">
+          <label>Type d'utilisateur</label>
+          <select [(ngModel)]="filtreType" (change)="applyFilters()">
+            <option [ngValue]="undefined">Tous les types</option>
+            <option [ngValue]="TypeUtilisateur.PATIENT">Patients</option>
+            <option [ngValue]="TypeUtilisateur.MEDECIN">Médecins</option>
+            <option [ngValue]="TypeUtilisateur.RECEPTIONNISTE">Réceptionnistes</option>
+            <option [ngValue]="TypeUtilisateur.ADMIN">Administrateurs</option>
+
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Statut</label>
+          <select [(ngModel)]="filtreStatut" (change)="applyFilters()">
+            <option value="">Tous les statuts</option>
+            <option value="ACTIF">Actif</option>
+            <option value="INACTIF">Inactif</option>
+            <option value="SUSPENDU">Suspendu</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Rechercher</label>
+          <input type="text" [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Nom, prénom ou email">
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div *ngIf="message" class="message" [ngClass]="{
+        'success': messageType === 'success',
+        'error': messageType === 'error',
+        'warning': messageType === 'warning'
+      }">
+        {{ message }}
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="loading-container">
+        <div class="spinner"></div>
+        <p class="text">Chargement...</p>
+      </div>
+
+      <!-- Tableau des utilisateurs -->
+      <div *ngIf="!loading" class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Type</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let utilisateur of paginatedUsers">
+              <td>
+                <div class="user-info">
+                  <div class="avatar">
+                    {{ utilisateur.prenom.charAt(0) }}{{ utilisateur.nom.charAt(0) }}
+                  </div>
+                  <div class="details">
+                    <div class="name">{{ utilisateur.prenom }} {{ utilisateur.nom }}</div>
+                    <div class="email">{{ utilisateur.email }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'type-patient': utilisateur.type === 'PATIENT',
+                  'type-medecin': utilisateur.type === 'MEDECIN',
+                  'type-receptionniste': utilisateur.type === 'RECEPTIONNISTE',
+                  'type-admin': utilisateur.type === 'ADMIN'
+                }">
+                  {{ getTypeLabel(utilisateur.type) }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'status-active': utilisateur.statut === 'ACTIF',
+                  'status-inactive': utilisateur.statut === 'INACTIF',
+                  'status-suspended': utilisateur.statut === 'SUSPENDU'
+                }">
+                  {{ getStatutLabel(utilisateur.statut) }}
+                </span>
+              </td>
+              <td>
+                <div class="actions">
+                  <button (click)="modifierUtilisateur(utilisateur)" class="edit">
+                    Modifier
+                  </button>
+                  <button (click)="changerStatutUtilisateur(utilisateur, StatutUtilisateur.SUSPENDU)"
+                    *ngIf="utilisateur.statut === 'ACTIF'" class="warning">
+                    Suspendre
+                  </button>
+                  <button (click)="changerStatutUtilisateur(utilisateur, StatutUtilisateur.ACTIF)"
+                    *ngIf="utilisateur.statut !== 'ACTIF'" class="success">
+                    Activer
+                  </button>
+                  <button (click)="supprimerUtilisateur(utilisateur)" class="delete">
+                    Supprimer
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <div class="pagination" *ngIf="totalPages > 1">
+          <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1">Précédent</button>
+          <span>Page {{currentPage}} sur {{totalPages}}</span>
+          <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages">Suivant</button>
+        </div>
+      </div>
+
+      <!-- Message si aucun utilisateur -->
+      <div *ngIf="!loading && filteredUsers.length === 0" class="empty-state">
+        Aucun utilisateur trouvé
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmation de suppression -->
+  <app-modal [title]="'Confirmer la suppression'" [visible]="showDeleteModal" (onClose)="annulerSuppression()"
+    (onConfirm)="confirmerSuppression()">
+    <p *ngIf="userToDelete">Êtes-vous sûr de vouloir supprimer définitivement {{userToDelete.prenom}}
+      {{userToDelete.nom}} ?</p>
+  </app-modal>
+</div>

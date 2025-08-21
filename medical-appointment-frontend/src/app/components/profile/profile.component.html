@@ -1,0 +1,344 @@
+<app-dashboard-nav></app-dashboard-nav>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="grid mt-8">
+    <div class="col-12 md:col-3">
+      <div class="card p-4">
+        <div class="flex flex-column align-items-center">
+          <div class="mb-4">
+            <div class="w-12rem h-12rem bg-gray-200 border-circle flex align-items-center justify-content-center profile-avatar-container">
+              <i class="fas fa-user text-6xl text-gray-500"></i> <!-- Changed from pi pi-user -->
+            </div>
+          </div>
+          <h3 class="text-xl font-bold mb-1">{{ profil?.prenom }} {{ profil?.nom }}</h3>
+          <span class="text-sm text-gray-500 mb-3">{{ getTypeUtilisateurLabel() }}</span>
+          
+          <div class="w-full">
+            <button
+              type="button"
+              class="custom-button w-full mb-2"
+              [class.custom-button-outlined]="activeTab !== 'profile'"
+              (click)="activeTab = 'profile'">
+              <i class="fas fa-user mr-2"></i> <!-- Changed from pi pi-user -->
+              Informations personnelles
+            </button>
+            <button
+              type="button"
+              class="custom-button w-full"
+              [class.custom-button-outlined]="activeTab !== 'password'"
+              (click)="activeTab = 'password'">
+              <i class="fas fa-lock mr-2"></i> <!-- Changed from pi pi-lock -->
+              Changer mot de passe
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 md:col-9">
+      <div class="card p-4">
+        <div *ngIf="loading" class="flex justify-content-center custom-spinner-container">
+          <div class="custom-spinner"></div> <!-- Replaced p-progressSpinner -->
+        </div>
+
+        <div *ngIf="activeTab === 'profile' && !loading">
+          <h2 class="text-2xl font-bold mb-4">
+            <i class="fas fa-user mr-2"></i>Informations personnelles <!-- Changed from pi pi-user -->
+          </h2>
+          
+          <form [formGroup]="profileForm" (ngSubmit)="modifierProfil()">
+            <div class="grid">
+              <div class="col-12 md:col-6">
+                <h3 class="text-lg font-semibold mb-3 border-bottom-1 surface-border pb-2">
+                  <i class="fas fa-id-card mr-2"></i>Informations de base <!-- Changed from pi pi-id-card -->
+                </h3>
+                
+                <div class="field mb-3">
+                  <label for="nom" class="block font-medium mb-2">
+                    <i class="fas fa-tag mr-2"></i>Nom <!-- Changed from pi pi-tag -->
+                  </label>
+                  <input type="text" id="nom" formControlName="nom" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                </div>
+                
+                <div class="field mb-3">
+                  <label for="prenom" class="block font-medium mb-2">
+                    <i class="fas fa-tag mr-2"></i>Prénom <!-- Changed from pi pi-tag -->
+                  </label>
+                  <input type="text" id="prenom" formControlName="prenom" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                </div>
+                
+                <div class="field mb-3">
+                  <label for="email" class="block font-medium mb-2">
+                    <i class="fas fa-envelope mr-2"></i>Email <!-- Changed from pi pi-envelope -->
+                  </label>
+                  <input type="email" id="email" formControlName="email" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                </div>
+                
+                <div class="field mb-3">
+                  <label for="dateNaissance" class="block font-medium mb-2">
+                    <i class="fas fa-calendar-alt mr-2"></i>Date de naissance <!-- Changed from pi pi-calendar -->
+                  </label>
+                  <input type="date" id="dateNaissance" formControlName="dateNaissance" class="custom-input w-full" /> <!-- Replaced p-calendar -->
+                </div>
+                
+                <div class="field mb-3">
+                  <label for="lieuNaissance" class="block font-medium mb-2">
+                    <i class="fas fa-map-marker-alt mr-2"></i>Lieu de naissance <!-- Changed from pi pi-map-marker -->
+                  </label>
+                  <input type="text" id="lieuNaissance" formControlName="lieuNaissance" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                </div>
+                
+                <div class="field mb-3">
+                  <label for="sexe" class="block font-medium mb-2">
+                    <i class="fas fa-users mr-2"></i>Sexe <!-- Changed from pi pi-users -->
+                  </label>
+                  <select id="sexe" formControlName="sexe" class="custom-select w-full"> <!-- Replaced p-dropdown -->
+                    <option value="">Sélectionnez</option>
+                    <option *ngFor="let option of sexeOptions" [value]="option">{{ option }}</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="col-12 md:col-6">
+                <h3 class="text-lg font-semibold mb-3 border-bottom-1 surface-border pb-2">
+                  <i class="fas fa-phone mr-2"></i>Contact et adresse <!-- Changed from pi pi-phone -->
+                </h3>
+                
+                <div class="field mb-3">
+                  <label for="telephone" class="block font-medium mb-2">
+                    <i class="fas fa-mobile-alt mr-2"></i>Téléphone <!-- Changed from pi pi-mobile -->
+                  </label>
+                  <input type="tel" id="telephone" formControlName="telephone" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                </div>
+                
+                <div class="field mb-3">
+                  <label for="adresse" class="block font-medium mb-2">
+                    <i class="fas fa-home mr-2"></i>Adresse <!-- Changed from pi pi-home -->
+                  </label>
+                  <textarea id="adresse" formControlName="adresse" rows="3" class="custom-textarea w-full"></textarea> <!-- Replaced pInputTextarea -->
+                </div>
+              </div>
+              
+              <div *ngIf="profil?.medecin" class="col-12">
+                <h3 class="text-lg font-semibold mb-3 border-bottom-1 surface-border pb-2">
+                  <i class="fas fa-briefcase mr-2"></i>Informations professionnelles <!-- Changed from pi pi-briefcase -->
+                </h3>
+                
+                <div class="grid">
+                  <div class="col-12 md:col-6">
+                    <div class="field mb-3">
+                      <label for="specialite" class="block font-medium mb-2">
+                        <i class="fas fa-star mr-2"></i>Spécialité <!-- Changed from pi pi-star -->
+                      </label>
+                      <select id="specialite" formControlName="specialite" class="custom-select w-full"> <!-- Replaced p-dropdown -->
+                        <option value="">Sélectionnez</option>
+                        <option *ngFor="let option of specialiteOptions" [value]="option">{{ option }}</option>
+                      </select>
+                    </div>
+                    
+                    <div class="field mb-3">
+                      <label for="matricule" class="block font-medium mb-2">
+                        <i class="fas fa-id-card mr-2"></i>Matricule <!-- Changed from pi pi-id-card -->
+                      </label>
+                      <input type="text" id="matricule" formControlName="matricule" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                    </div>
+                    
+                    <div class="field mb-3">
+                      <label for="numeroOrdre" class="block font-medium mb-2">
+                        <i class="fas fa-sort-numeric-up-alt mr-2"></i>Numéro d'ordre <!-- Changed from pi pi-sort-numeric-up -->
+                      </label>
+                      <input type="text" id="numeroOrdre" formControlName="numeroOrdre" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                    </div>
+                  </div>
+                  
+                  <div class="col-12 md:col-6">
+                    <div class="field mb-3">
+                      <label for="experience" class="block font-medium mb-2">
+                        <i class="fas fa-clock mr-2"></i>Expérience (années) <!-- Changed from pi pi-clock -->
+                      </label>
+                      <input type="number" id="experience" formControlName="experience" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                    </div>
+                    
+                    <div class="field mb-3">
+                      <label for="titre" class="block font-medium mb-2">
+                        <i class="fas fa-bookmark mr-2"></i>Titre <!-- Changed from pi pi-bookmark -->
+                      </label>
+                      <input type="text" id="titre" formControlName="titre" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                    </div>
+                    
+                    <div class="field mb-3">
+                      <label for="biographie" class="block font-medium mb-2">
+                        <i class="fas fa-file-alt mr-2"></i>Biographie <!-- Changed from pi pi-file -->
+                      </label>
+                      <textarea id="biographie" formControlName="biographie" rows="3" class="custom-textarea w-full"></textarea> <!-- Replaced pInputTextarea -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div *ngIf="profil?.patient" class="col-12">
+                <h3 class="text-lg font-semibold mb-3 border-bottom-1 surface-border pb-2">
+                  <i class="fas fa-heartbeat mr-2"></i>Informations médicales <!-- Changed from pi pi-heart -->
+                </h3>
+                
+                <div class="grid">
+                  <div class="col-12 md:col-6">
+                    <div class="field mb-3">
+                      <label for="profession" class="block font-medium mb-2">
+                        <i class="fas fa-briefcase mr-2"></i>Profession <!-- Changed from pi pi-briefcase -->
+                      </label>
+                      <input type="text" id="profession" formControlName="profession" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                    </div>
+                    
+                    <div class="field mb-3">
+                      <label for="groupeSanguin" class="block font-medium mb-2">
+                        <i class="fas fa-tint mr-2"></i>Groupe sanguin <!-- Changed from pi pi-tint -->
+                      </label>
+                      <select id="groupeSanguin" formControlName="groupeSanguin" class="custom-select w-full"> <!-- Replaced p-dropdown -->
+                        <option value="">Sélectionnez</option>
+                        <option *ngFor="let option of groupeSanguinOptions" [value]="option">{{ option }}</option>
+                      </select>
+                    </div>
+                    
+                    <div class="field mb-3">
+                      <label for="allergies" class="block font-medium mb-2">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Allergies <!-- Changed from pi pi-exclamation-triangle -->
+                      </label>
+                      <input type="text" id="allergies" formControlName="allergies" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                    </div>
+                  </div>
+                  
+                  <div class="col-12 md:col-6">
+                    <div class="field mb-3">
+                      <label for="contactUrgenceNom" class="block font-medium mb-2">
+                        <i class="fas fa-user-plus mr-2"></i>Contact urgence (nom) <!-- Changed from pi pi-user-plus -->
+                      </label>
+                      <input type="text" id="contactUrgenceNom" formControlName="contactUrgenceNom" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                    </div>
+                    
+                    <div class="field mb-3">
+                      <label for="contactUrgenceTelephone" class="block font-medium mb-2">
+                        <i class="fas fa-phone-alt mr-2"></i>Contact urgence (téléphone) <!-- Changed from pi pi-phone -->
+                      </label>
+                      <input type="tel" id="contactUrgenceTelephone" formControlName="contactUrgenceTelephone" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                    </div>
+                    
+                    <div class="field mb-3">
+                      <label for="preferencesNotification" class="block font-medium mb-2">
+                        <i class="fas fa-bell mr-2"></i>Préférences notifications <!-- Changed from pi pi-bell -->
+                      </label>
+                      <input type="text" id="preferencesNotification" formControlName="preferencesNotification" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div *ngIf="profil?.receptionniste" class="col-12">
+                <h3 class="text-lg font-semibold mb-3 border-bottom-1 surface-border pb-2">
+                  <i class="fas fa-desktop mr-2"></i>Informations professionnelles <!-- Changed from pi pi-desktop -->
+                </h3>
+                
+                <div class="grid">
+                  <div class="col-12 md:col-6">
+                    <div class="field mb-3">
+                      <label for="poste" class="block font-medium mb-2">
+                        <i class="fas fa-user-edit mr-2"></i>Poste <!-- Changed from pi pi-user-edit -->
+                      </label>
+                      <input type="text" id="poste" formControlName="poste" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                    </div>
+                  </div>
+                  
+                  <div class="col-12 md:col-6">
+                    <div class="field mb-3">
+                      <label for="idHopital" class="block font-medium mb-2">
+                        <i class="fas fa-building mr-2"></i>ID Hôpital <!-- Changed from pi pi-building -->
+                      </label>
+                      <input type="number" id="idHopital" formControlName="idHopital" class="custom-input w-full" /> <!-- Replaced pInputText -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex justify-content-end mt-4">
+              <button type="submit" class="custom-button custom-button-primary">
+                <i class="fas fa-save mr-2"></i> <!-- Changed from pi pi-save -->
+                Enregistrer
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div *ngIf="activeTab === 'password' && !loading">
+          <h2 class="text-2xl font-bold mb-4">
+            <i class="fas fa-lock mr-2"></i>Changer le mot de passe <!-- Changed from pi pi-lock -->
+          </h2>
+          
+          <form [formGroup]="passwordForm" (ngSubmit)="changerMotDePasse()">
+            <div class="grid">
+              <div class="col-12 md:col-6">
+                <div class="field mb-3">
+                  <label for="ancienMotDePasse" class="block font-medium mb-2">
+                    <i class="fas fa-key mr-2"></i>Ancien mot de passe <!-- Changed from pi pi-key -->
+                  </label>
+                  <div class="custom-password-input w-full">
+                    <input
+                      id="ancienMotDePasse"
+                      formControlName="ancienMotDePasse"
+                      [type]="showOldPassword ? 'text' : 'password'"
+                      class="custom-input"
+                    />
+                    <button type="button" (click)="toggleOldPasswordVisibility()" class="toggle-password-visibility">
+                      <i [class]="showOldPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="field mb-3">
+                  <label for="nouveauMotDePasse" class="block font-medium mb-2">
+                    <i class="fas fa-key mr-2"></i>Nouveau mot de passe <!-- Changed from pi pi-key -->
+                  </label>
+                  <div class="custom-password-input w-full">
+                    <input
+                      id="nouveauMotDePasse"
+                      formControlName="nouveauMotDePasse"
+                      [type]="showNewPassword ? 'text' : 'password'"
+                      class="custom-input"
+                    />
+                    <button type="button" (click)="toggleNewPasswordVisibility()" class="toggle-password-visibility">
+                      <i [class]="showNewPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="field mb-3">
+                  <label for="confirmationMotDePasse" class="block font-medium mb-2">
+                    <i class="fas fa-key mr-2"></i>Confirmation <!-- Changed from pi pi-key -->
+                  </label>
+                  <div class="custom-password-input w-full">
+                    <input
+                      id="confirmationMotDePasse"
+                      formControlName="confirmationMotDePasse"
+                      [type]="showConfirmPassword ? 'text' : 'password'"
+                      class="custom-input"
+                    />
+                    <button type="button" (click)="toggleConfirmPasswordVisibility()" class="toggle-password-visibility">
+                      <i [class]="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="flex justify-content-end mt-4">
+              <button type="submit" class="custom-button custom-button-primary">
+                <i class="fas fa-check mr-2"></i> <!-- Changed from pi pi-check -->
+                Changer le mot de passe
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

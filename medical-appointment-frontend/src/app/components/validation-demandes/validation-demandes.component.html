@@ -1,0 +1,227 @@
+<div class="validation-demandes-container">
+  <div class="container">
+    <div class="header">
+      <h1>Validation des demandes d'inscription</h1>
+      <p>Gérez les demandes d'inscription des médecins</p>
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters-container">
+      <div class="filters">
+        <div class="filter-group">
+          <label>Statut</label>
+          <select [(ngModel)]="filtreStatut" (change)="filtrerDemandes()">
+            <option value="">Tous</option>
+            <option value="EN_ATTENTE">En attente</option>
+            <option value="APPROUVE">Approuvé</option>
+            <option value="REJETE">Rejeté</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Spécialité</label>
+          <select [(ngModel)]="filtreSpecialite" (change)="filtrerDemandes()">
+            <option value="">Toutes</option>
+            <option *ngFor="let specialite of specialites" [value]="specialite">{{specialite}}</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Recherche</label>
+          <input type="text" [(ngModel)]="rechercheText" (input)="filtrerDemandes()" 
+                 placeholder="Nom, prénom, email...">
+        </div>
+      </div>
+    </div>
+
+    <!-- Liste des demandes -->
+    <div class="demandes-table-container">
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Médecin</th>
+              <th>Spécialité</th>
+              <th>Hôpital</th>
+              <th>Date</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let demande of demandesFiltrees">
+              <td>
+                <div class="doctor-info">
+                  <div class="doctor-name">{{demande.nom}} {{demande.prenom}}</div>
+                  <div class="doctor-email">{{demande.email}}</div>
+                </div>
+              </td>
+              <td>
+                <div class="specialite">{{demande.specialite}}</div>
+                <div class="numero-ordre">{{demande.numeroOrdre}}</div>
+              </td>
+              <td class="hopital">{{ getNomHopital(demande.idsHopitaux) }}</td>
+              <td class="date">{{demande.dateCreation | date:'dd/MM/yyyy'}}</td>
+              <td>
+                <span class="status-badge" [ngClass]="getStatusClass(demande.statut)">
+                  {{getStatutLabel(demande.statut)}}
+                </span>
+              </td>
+              <td class="actions">
+                <button (click)="voirDetails(demande)" class="btn-view">Voir</button>
+                <button *ngIf="demande.statut === 'INACTIF'" 
+                        (click)="approuver(demande)" 
+                        class="btn-approve">
+                  Approuver
+                </button>
+                <button *ngIf="demande.statut === 'INACTIF'" 
+                        (click)="rejeter(demande)" 
+                        class="btn-reject">
+                  Rejeter
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div *ngIf="demandesFiltrees.length === 0" class="empty-message">
+        <p>Aucune demande trouvée</p>
+      </div>
+    </div>
+
+    <!-- Modal de détails -->
+    <div *ngIf="demandeSelectionnee" class="modal-overlay" (click)="fermerModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-body">
+          <div class="modal-header">
+            <h3>Détails de la demande</h3>
+            <button (click)="fermerModal()" class="modal-close-btn">
+              <i class="ff ff-close"></i>
+            </button>
+          </div>
+
+          <div class="modal-scroll-content">
+            <!-- Informations personnelles -->
+            <div class="info-section">
+              <h4>Informations personnelles</h4>
+              <div class="info-grid">
+                <div><strong>Nom:</strong> {{demandeSelectionnee.nom}}</div>
+                <div><strong>Prénom:</strong> {{demandeSelectionnee.prenom}}</div>
+                <div><strong>Email:</strong> {{demandeSelectionnee.email}}</div>
+                <div><strong>Téléphone:</strong> {{demandeSelectionnee.telephone}}</div>
+                <div><strong>Date de naissance:</strong> {{demandeSelectionnee.dateNaissance | date:'dd/MM/yyyy'}}</div>
+                <div><strong>Lieu de naissance:</strong> {{demandeSelectionnee.lieuNaissance}}</div>
+                <div><strong>Adresse:</strong> {{demandeSelectionnee.adresse}}</div>
+              </div>
+            </div>
+
+            <!-- Informations professionnelles -->
+            <div class="info-section">
+              <h4>Informations professionnelles</h4>
+              <div class="info-grid">
+                <div><strong>Numéro d'ordre:</strong> {{demandeSelectionnee.numeroOrdre}}</div>
+                <div><strong>Spécialité:</strong> {{demandeSelectionnee.specialite}}</div>
+                <div><strong>Titre:</strong> {{demandeSelectionnee.titre || 'Non spécifié'}}</div>
+                <div><strong>Expérience:</strong> {{demandeSelectionnee.experience || 0}} ans</div>
+                <div><strong>Hôpital:</strong> {{demandeSelectionnee.idsHopitaux}}</div>
+              </div>
+              <div *ngIf="demandeSelectionnee.biographie" class="biographie">
+                <strong>Biographie:</strong>
+                <p>{{demandeSelectionnee.biographie}}</p>
+              </div>
+            </div>
+
+            <!-- Motif de demande -->
+            <div class="info-section">
+                <h4>Choisir un motif de la demande </h4>
+                <select [(ngModel)]="motifDemande" class="form-control">
+                    <option value="" disabled selected>-- Sélectionner un motif --</option>
+                    <option *ngFor="let motif of motifsDisponibles" [value]="motif">
+                    {{ motif }}
+                    </option>
+                </select>
+            </div>
+  >
+
+            <!-- Documents -->
+            <div class="info-section">
+              <h4>Documents justificatifs</h4>
+              <div class="documents-list">
+                <div *ngIf="demandeSelectionnee.diplomePath" class="document-item">
+                  <span>Diplôme de médecine</span>
+                  <div class="document-actions">
+                    <button (click)="previewFile(demandeSelectionnee.diplomePath!)" class="btn-preview">
+                      Aperçu
+                    </button>
+                    <button (click)="downloadFile(demandeSelectionnee.diplomePath!)" class="btn-download">
+                      Télécharger
+                    </button>
+                  </div>
+                </div>
+                <div *ngIf="demandeSelectionnee.carteOrdrePath" class="document-item">
+                  <span>Carte d'ordre</span>
+                  <div class="document-actions">
+                    <button (click)="previewFile(demandeSelectionnee.carteOrdrePath!)" class="btn-preview">
+                      Aperçu
+                    </button>
+                    <button (click)="downloadFile(demandeSelectionnee.carteOrdrePath!)" class="btn-download">
+                      Télécharger
+                    </button>
+                  </div>
+                </div>
+                <div *ngIf="demandeSelectionnee.cvPath" class="document-item">
+                  <span>CV</span>
+                  <div class="document-actions">
+                    <button (click)="previewFile(demandeSelectionnee.cvPath!)" class="btn-preview">
+                      Aperçu
+                    </button>
+                    <button (click)="downloadFile(demandeSelectionnee.cvPath!)" class="btn-download">
+                      Télécharger
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="modal-actions">
+            <button (click)="fermerModal()" class="btn-close">
+              Fermer
+            </button>
+            <button *ngIf="demandeSelectionnee.statut === 'INACTIF'" 
+                    (click)="rejeter(demandeSelectionnee)" 
+                    class="btn-reject">
+              Rejeter
+            </button>
+            <button *ngIf="demandeSelectionnee.statut === 'INACTIF'" 
+                    (click)="approuver(demandeSelectionnee)" 
+                    class="btn-approve">
+              Approuver
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de rejet -->
+    <div *ngIf="showRejetModal" class="modal-overlay">
+      <div class="reject-modal-content">
+        <div class="modal-body">
+          <h3>Motif du rejet</h3>
+          <textarea [(ngModel)]="motifRejet" 
+                    rows="4" 
+                    placeholder="Expliquez pourquoi vous rejetez cette demande...">
+          </textarea>
+          <div class="modal-actions">
+            <button (click)="annulerRejet()" class="btn-cancel">
+              Annuler
+            </button>
+            <button (click)="confirmerRejet()" class="btn-confirm-reject">
+              Confirmer le rejet
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

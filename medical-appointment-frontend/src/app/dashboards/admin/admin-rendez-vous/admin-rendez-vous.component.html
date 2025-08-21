@@ -1,0 +1,675 @@
+<app-dashboard-nav [currentRole]="userType"></app-dashboard-nav>
+<div class="admin-rdv-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <i class="fas fa-calendar-alt"></i>
+        Gestion des Rendez-vous
+      </h1>
+      <p class="page-subtitle">Administration et suivi des rendez-vous</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline-secondary" (click)="refresh()">
+        <i class="fas fa-sync-alt"></i>
+        Actualiser
+      </button>
+      <button class="btn btn-outline-info" (click)="exportRendezVous()">
+        <i class="fas fa-download"></i>
+        Exporter
+      </button>
+      <button class="btn btn-primary" (click)="openCreateModal()">
+        <i class="fas fa-plus"></i>
+        Nouveau RDV
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="stats-row">
+    <div class="stat-card total">
+      <div class="stat-icon">
+        <i class="fas fa-calendar-alt"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ stats.total }}</div>
+        <div class="stat-label">Total RDV</div>
+      </div>
+    </div>
+
+    <div class="stat-card pending">
+      <div class="stat-icon">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ stats.enAttente }}</div>
+        <div class="stat-label">En attente</div>
+      </div>
+    </div>
+
+    <div class="stat-card confirmed">
+      <div class="stat-icon">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ stats.confirmes }}</div>
+        <div class="stat-label">Confirmés</div>
+      </div>
+    </div>
+
+    <div class="stat-card ongoing">
+      <div class="stat-icon">
+        <i class="fas fa-play-circle"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ stats.enCours }}</div>
+        <div class="stat-label">En cours</div>
+      </div>
+    </div>
+
+    <div class="stat-card completed">
+      <div class="stat-icon">
+        <i class="fas fa-check-double"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ stats.termines }}</div>
+        <div class="stat-label">Terminés</div>
+      </div>
+    </div>
+
+    <div class="stat-card late">
+      <div class="stat-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <div class="stat-content">
+        <div class="stat-number">{{ stats.enRetard }}</div>
+        <div class="stat-label">En retard</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-section">
+    <div class="filters-header">
+      <h3><i class="fas fa-filter"></i> Filtres</h3>
+      <button class="btn btn-sm btn-outline-secondary" (click)="clearFilters()">
+        <i class="fas fa-times"></i>
+        Effacer
+      </button>
+    </div>
+
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label>Statut</label>
+        <select class="form-control" [(ngModel)]="filters.statut" (change)="applyFilters()">
+          <option value="">Tous les statuts</option>
+          <option *ngFor="let option of statutOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Hôpital</label>
+        <select class="form-control" [(ngModel)]="filters.hopital" (change)="applyFilters()">
+          <option [value]="null">Tous les hôpitaux</option>
+          <option *ngFor="let hopital of hopitaux" [value]="hopital.id">
+            {{ hopital.nom }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Service</label>
+        <select class="form-control" [(ngModel)]="filters.service" (change)="applyFilters()">
+          <option [value]="null">Tous les services</option>
+          <option *ngFor="let service of services" [value]="service.id">
+            {{ service.nom }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Médecin</label>
+        <select class="form-control" [(ngModel)]="filters.medecin" (change)="applyFilters()">
+          <option [value]="null">Tous les médecins</option>
+          <option *ngFor="let medecin of medecins" [value]="medecin.id">
+            Dr. {{ medecin.nom }} {{ medecin.prenom }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Urgence</label>
+        <select class="form-control" [(ngModel)]="filters.urgence" (change)="applyFilters()">
+          <option value="">Toutes urgences</option>
+          <option *ngFor="let option of urgenceOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Date début</label>
+        <input type="date" class="form-control" [(ngModel)]="filters.dateDebut" (change)="applyFilters()">
+      </div>
+
+      <div class="filter-group">
+        <label>Date fin</label>
+        <input type="date" class="form-control" [(ngModel)]="filters.dateFin" (change)="applyFilters()">
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-section">
+    <div class="spinner"></div>
+    <p>Chargement des rendez-vous...</p>
+  </div>
+
+  <!-- Table des rendez-vous -->
+  <div *ngIf="!loading" class="table-section">
+    <div class="table-header">
+      <h3>Liste des rendez-vous ({{ totalItems }})</h3>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Date & Heure</th>
+            <th>Patient</th>
+            <th>Médecin</th>
+            <th>Service</th>
+            <th>Type</th>
+            <th>Durée</th>
+            <th>Statut</th>
+            <th>Urgence</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let rdv of getPaginatedData()">
+            <td>
+              <div class="datetime-cell">
+                <div class="date">{{ rdv.dateHeure | date:'dd/MM/yyyy' }}</div>
+                <div class="time">{{ rdv.dateHeure | date:'HH:mm' }}</div>
+              </div>
+            </td>
+            <td>
+              <div class="patient-cell">
+                <div class="name">{{ rdv.patientNomComplet }}</div>
+                <div class="id">ID: {{ rdv.patientId }}</div>
+              </div>
+            </td>
+            <td>
+              <div class="medecin-cell">
+                <div class="name">Dr. {{ rdv.medecinNomComplet }}</div>
+                <div class="specialite">{{ rdv.medecinSpecialite }}</div>
+              </div>
+            </td>
+            <td>
+              <div class="service-cell">
+                <div class="name">{{ rdv.serviceNom }}</div>
+                <div class="hopital">{{ rdv.hopitalNom }}</div>
+              </div>
+            </td>
+            <td>
+              <span class="type-badge">{{ rdv.typeConsultation }}</span>
+            </td>
+            <td>
+              <span class="duration">{{ rdv.dureePrevue }} min</span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="getStatutClass(rdv.statut)">
+                {{ rdv.statut }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="getUrgenceClass(rdv.niveauUrgence)">
+                {{ rdv.niveauUrgence }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn btn-sm btn-outline-info" 
+                        (click)="openDetailsModal(rdv)"
+                        title="Voir détails">
+                  <i class="fas fa-eye"></i>
+                </button>
+                
+                <button class="btn btn-sm btn-outline-primary" 
+                        (click)="openEditModal(rdv)"
+                        title="Modifier">
+                  <i class="fas fa-edit"></i>
+                </button>
+
+                <div class="btn-group btn-group-sm" dropdown>
+                  <button class="btn btn-outline-secondary dropdown-toggle" 
+                          type="button" 
+                          data-toggle="dropdown">
+                    <i class="fas fa-cog"></i>
+                  </button>
+                  <div class="dropdown-menu">
+                    <button *ngIf="rdv.statut === 'PLANIFIE'" 
+                            class="dropdown-item" 
+                            (click)="confirmerRendezVous(rdv)">
+                      <i class="fas fa-check text-success"></i> Confirmer
+                    </button>
+                    <button *ngIf="rdv.statut !== 'ANNULE'" 
+                            class="dropdown-item" 
+                            (click)="annulerRendezVous(rdv)">
+                      <i class="fas fa-ban text-warning"></i> Annuler
+                    </button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item text-danger" 
+                            (click)="deleteRendezVous(rdv)">
+                      <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-section" *ngIf="totalItems > itemsPerPage">
+      <nav>
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link" (click)="onPageChange(currentPage - 1)">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+          </li>
+          
+          <li *ngFor="let page of [].constructor(Math.ceil(totalItems / itemsPerPage)); let i = index" 
+              class="page-item" 
+              [class.active]="currentPage === i + 1">
+            <button class="page-link" (click)="onPageChange(i + 1)">
+              {{ i + 1 }}
+            </button>
+          </li>
+          
+          <li class="page-item" [class.disabled]="currentPage === Math.ceil(totalItems / itemsPerPage)">
+            <button class="page-link"
+              (click)="onPageChange(currentPage + 1)">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Création -->
+<div class="modal fade" [class.show]="showCreateModal" [style.display]="showCreateModal ? 'block' : 'none'" *ngIf="showCreateModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-plus"></i>
+          Nouveau Rendez-vous
+        </h5>
+        <button type="button" class="close" (click)="closeCreateModal()">
+          <span>&times;</span>
+        </button>
+      </div>
+      
+      <form [formGroup]="createForm" (ngSubmit)="onCreateSubmit()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Patient *</label>
+                <select class="form-control" formControlName="patientId">
+                  <option value="">Sélectionner un patient</option>
+                  <option *ngFor="let patient of patients" [value]="patient.id">
+                    {{ patient.nom }} {{ patient.prenom }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Hôpital *</label>
+                <select class="form-control" formControlName="hopitalId">
+                  <option value="">Sélectionner un hôpital</option>
+                  <option *ngFor="let hopital of hopitaux" [value]="hopital.id">
+                    {{ hopital.nom }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Service *</label>
+                <select class="form-control" formControlName="serviceId">
+                  <option value="">Sélectionner un service</option>
+                  <option *ngFor="let service of services" [value]="service.id">
+                    {{ service.nom }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Médecin *</label>
+                <select class="form-control" formControlName="medecinId">
+                  <option value="">Sélectionner un médecin</option>
+                  <option *ngFor="let medecin of medecins" [value]="medecin.id">
+                    Dr. {{ medecin.nom }} {{ medecin.prenom }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Date et Heure *</label>
+                <input type="datetime-local" class="form-control" formControlName="dateHeure">
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Durée prévue (minutes) *</label>
+                <input type="number" class="form-control" formControlName="dureePrevue" min="15" step="15">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Type de consultation *</label>
+                <select class="form-control" formControlName="typeConsultation">
+                  <option value="CONSULTATION">Consultation</option>
+                  <option value="SUIVI">Suivi</option>
+                  <option value="URGENCE">Urgence</option>
+                  <option value="CONTROLE">Contrôle</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Niveau d'urgence *</label>
+                <select class="form-control" formControlName="niveauUrgence">
+                  <option *ngFor="let option of urgenceOptions" [value]="option.value">
+                    {{ option.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Motif de consultation *</label>
+            <textarea class="form-control" formControlName="motifConsultation" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Notes</label>
+            <textarea class="form-control" formControlName="notes" rows="2"></textarea>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeCreateModal()">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="!createForm.valid">
+            <i class="fas fa-save"></i>
+            Créer le RDV
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Modification -->
+<div class="modal fade" [class.show]="showEditModal" [style.display]="showEditModal ? 'block' : 'none'" *ngIf="showEditModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-edit"></i>
+          Modifier le Rendez-vous
+        </h5>
+        <button type="button" class="close" (click)="closeEditModal()">
+          <span>&times;</span>
+        </button>
+      </div>
+      
+      <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Date et Heure *</label>
+                <input type="datetime-local" class="form-control" formControlName="dateHeure">
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Durée prévue (minutes) *</label>
+                <input type="number" class="form-control" formControlName="dureePrevue" min="15" step="15">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Type de consultation *</label>
+                <select class="form-control" formControlName="typeConsultation">
+                  <option value="CONSULTATION">Consultation</option>
+                  <option value="SUIVI">Suivi</option>
+                  <option value="URGENCE">Urgence</option>
+                  <option value="CONTROLE">Contrôle</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Niveau d'urgence *</label>
+                <select class="form-control" formControlName="niveauUrgence">
+                  <option *ngFor="let option of urgenceOptions" [value]="option.value">
+                    {{ option.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Statut *</label>
+            <select class="form-control" formControlName="statut">
+              <option *ngFor="let option of statutOptions" [value]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Motif de consultation *</label>
+            <textarea class="form-control" formControlName="motifConsultation" rows="3"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Notes</label>
+            <textarea class="form-control" formControlName="notes" rows="2"></textarea>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="closeEditModal()">
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="!editForm.valid">
+            <i class="fas fa-save"></i>
+            Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Détails -->
+<div class="modal fade" [class.show]="showDetailsModal" [style.display]="showDetailsModal ? 'block' : 'none'" *ngIf="showDetailsModal && selectedRendezVous">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-eye"></i>
+          Détails du Rendez-vous
+        </h5>
+        <button type="button" class="close" (click)="closeDetailsModal()">
+          <span>&times;</span>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="detail-group">
+              <label>Patient</label>
+              <div class="detail-value">
+                {{ selectedRendezVous.patientNomComplet }} 
+                <small class="text-muted d-block">ID: {{ selectedRendezVous.patientId }}</small>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="detail-group">
+              <label>Médecin</label>
+              <div class="detail-value">
+                Dr. {{ selectedRendezVous.medecinNomComplet }}
+                <small class="text-muted d-block">{{ selectedRendezVous.medecinSpecialite }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="detail-group">
+              <label>Service</label>
+              <div class="detail-value">{{ selectedRendezVous.serviceNom }}</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="detail-group">
+              <label>Hôpital</label>
+              <div class="detail-value">{{ selectedRendezVous.hopitalNom }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="detail-group">
+              <label>Date</label>
+              <div class="detail-value">{{ selectedRendezVous.dateHeure | date:'dd/MM/yyyy' }}</div>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="detail-group">
+              <label>Heure</label>
+              <div class="detail-value">{{ selectedRendezVous.dateHeure | date:'HH:mm' }}</div>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="detail-group">
+              <label>Durée</label>
+              <div class="detail-value">{{ selectedRendezVous.dureePrevue }} minutes</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="detail-group">
+              <label>Type</label>
+              <div class="detail-value">{{ selectedRendezVous.typeConsultation }}</div>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="detail-group">
+              <label>Statut</label>
+              <div class="detail-value">
+                <span class="badge" [ngClass]="getStatutClass(selectedRendezVous.statut)">
+                  {{ selectedRendezVous.statut }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-4">
+            <div class="detail-group">
+              <label>Urgence</label>
+              <div class="detail-value">
+                <span class="badge" [ngClass]="getUrgenceClass(selectedRendezVous.niveauUrgence)">
+                  {{ selectedRendezVous.niveauUrgence }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-group">
+          <label>Motif de consultation</label>
+          <div class="detail-value">{{ selectedRendezVous.motif }}</div>
+        </div>
+        <div class="row" *ngIf="selectedRendezVous.dateCreation">
+          <div class="col-md-6">
+            <div class="detail-group">
+              <label>Date de création</label>
+              <div class="detail-value">{{ selectedRendezVous.dateCreation | date:'dd/MM/yyyy HH:mm' }}</div>
+            </div>
+          </div>
+          
+          <div class="col-md-6" *ngIf="selectedRendezVous.dateModification">
+            <div class="detail-group">
+              <label>Dernière modification</label>
+              <div class="detail-value">{{ selectedRendezVous.dateModification | date:'dd/MM/yyyy HH:mm' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDetailsModal()">
+          Fermer
+        </button>
+        <button type="button" class="btn btn-primary" (click)="openEditModal(selectedRendezVous)">
+          <i class="fas fa-edit"></i>
+          Modifier
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop pour les modals -->
+<div class="modal-backdrop fade show" *ngIf="showCreateModal || showEditModal || showDetailsModal"></div>

@@ -1,0 +1,250 @@
+<nav class="dashboard-nav medecin-theme">
+  <div class="dashboard-nav-content">
+
+    <a [routerLink]="getDashboardRoute()" class="dashboard-nav-logo">
+      <div class="logo-container">
+        <img src="assets/logos/sante.png" alt="Logo HMS" class="logo-image">
+        <span class="logo-text">HMS</span>
+      </div>
+    </a>
+
+    <div class="dashboard-nav-links">
+      <ng-container *ngFor="let group of filteredNavGroups">
+        <!-- Groupe avec un seul lien (navigation directe) -->
+        <a *ngIf="group.links.length === 1"
+           [routerLink]="group.links[0].path"
+           routerLinkActive="active"
+           [routerLinkActiveOptions]="{exact: false}"
+           class="nav-link">
+          <i [class]="group.icon"></i> 
+          <span>{{ group.label }}</span>
+          <span *ngIf="group.links[0].badgeCount && group.links[0].badgeCount > 0" 
+                class="badge">
+            {{ group.links[0].badgeCount }}
+          </span>
+        </a>
+
+        <!-- Groupe avec plusieurs liens (dropdown) -->
+        <div *ngIf="group.links.length > 1"
+             class="nav-dropdown-parent"
+             [class.open]="isGroupOpen(group.label)"
+             [class.active]="isGroupActive(group)">
+          
+          <button class="nav-link nav-dropdown-trigger"
+                  (click)="toggleGroup(group.label, $event)"
+                  [class.active]="isGroupActive(group)">
+            <div class="nav-link-content">
+              <i [class]="group.icon"></i>
+              <span>{{ group.label }}</span>
+            </div>
+            <div class="nav-link-indicators">
+              <span *ngIf="getGroupBadgeCount(group) > 0" class="badge">
+                {{ getGroupBadgeCount(group) }}
+              </span>
+              <i class="fas fa-chevron-down dropdown-arrow" 
+                 [class.rotated]="isGroupOpen(group.label)"></i>
+            </div>
+          </button>
+
+          <div class="nav-submenu" [class.show]="isGroupOpen(group.label)">
+            <a *ngFor="let link of group.links"
+               [routerLink]="link.path"
+               routerLinkActive="active"
+               [routerLinkActiveOptions]="{exact: false}"
+               class="sub-link"
+               (click)="openGroups.clear()">
+              <i [class]="link.icon"></i>
+              <span>{{ link.label }}</span>
+              <span *ngIf="link.badgeCount && link.badgeCount > 0" class="badge">
+                {{ link.badgeCount }}
+              </span>
+            </a>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="dashboard-nav-actions">
+      <div class="notification-container" (document:click)="notificationMenuOpen = false">
+        <button
+          class="notification-button"
+          (click)="notificationMenuOpen = !notificationMenuOpen; $event.stopPropagation()">
+          <i class="fas fa-bell"></i>
+          <span *ngIf="unreadNotificationCount > 0" class="notification-badge">
+            {{ unreadNotificationCount }}
+          </span>
+        </button>
+
+        <div *ngIf="notificationMenuOpen" class="notification-dropdown">
+          <div class="notification-header">
+            <h3>Notifications</h3>
+            <button
+              *ngIf="unreadNotificationCount > 0"
+              (click)="markAllNotificationsAsRead(); $event.stopPropagation()"
+              class="mark-all-read-btn">
+              Tout marquer comme lu
+            </button>
+          </div>
+
+          <div class="notification-list custom-scrollbar">
+            <ng-container *ngIf="notifications && notifications.length > 0; else noNotifications">
+              <div *ngFor="let notification of notifications.slice(0, 5)"
+                   class="notification-item"
+                   [class.unread]="!notification.read"
+                   (click)="markNotificationAsRead(notification.id); $event.stopPropagation()">
+                <div class="notification-content">
+                  <div class="notification-icon">
+                    <i [class]="getNotificationIcon(notification.type)"></i>
+                  </div>
+                  <div class="notification-text">
+                    <h4>{{ notification.title }}</h4>
+                    <p>{{ notification.message }}</p>
+                    <span class="notification-time">{{ formatTimestamp(notification.timestamp) }}</span>
+                  </div>
+                </div>
+                <button
+                  (click)="deleteNotification(notification.id); $event.stopPropagation()"
+                  class="delete-notification-btn"
+                  title="Supprimer">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </ng-container>
+            <ng-template #noNotifications>
+              <div class="no-notifications">
+                <i class="fas fa-info-circle"></i>
+                <p>Aucune nouvelle notification.</p>
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="notification-footer">
+            <a routerLink="/admin/notifications" class="view-all-link" (click)="notificationMenuOpen = false">
+              Voir toutes les notifications <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="user-menu-container" (document:click)="userMenuOpen = false">
+        <button
+          class="user-menu-button"
+          (click)="userMenuOpen = !userMenuOpen; $event.stopPropagation()">
+          <div class="user-avatar">
+            {{ userInitials }}
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ userName }}</span>
+            <span class="user-role">{{ role }}</span>
+          </div>
+          <i class="fas fa-chevron-down user-menu-arrow" [class.rotated]="userMenuOpen"></i>
+        </button>
+
+        <div *ngIf="userMenuOpen" class="user-dropdown">
+          <div class="user-dropdown-header">
+            <div class="user-avatar large">{{ userInitials }}</div>
+            <div class="user-details">
+              <p class="user-name">{{ userName }}</p>
+              <p class="user-email">{{ email }}</p>
+            </div>
+          </div>
+
+          <div class="user-dropdown-menu">
+            <a (click)="goToProfil(); userMenuOpen = false" class="dropdown-item">
+              <i class="fas fa-user-circle"></i>
+              <span>Mon profil</span>
+            </a>
+            <a routerLink="/admin/parametres" class="dropdown-item" (click)="userMenuOpen = false">
+              <i class="fas fa-cog"></i>
+              <span>Paramètres</span>
+            </a>
+            <a routerLink="/admin/aide" class="dropdown-item" (click)="userMenuOpen = false">
+              <i class="fas fa-question-circle"></i>
+              <span>Aide</span>
+            </a>
+            <div class="dropdown-divider"></div>
+            <button (click)="logout()" class="dropdown-item logout">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Déconnexion</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button class="mobile-menu-button" (click)="mobileMenuOpen = !mobileMenuOpen">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Menu mobile -->
+  <div *ngIf="mobileMenuOpen" class="mobile-menu">
+    <div class="mobile-menu-content">
+      <div class="mobile-nav-links">
+        <ng-container *ngFor="let group of filteredNavGroups">
+          <!-- Groupe avec un seul lien sur mobile -->
+          <a *ngIf="group.links.length === 1"
+             [routerLink]="group.links[0].path"
+             routerLinkActive="active"
+             [routerLinkActiveOptions]="{exact: false}"
+             class="mobile-nav-link"
+             (click)="mobileMenuOpen = false">
+            <i [class]="group.icon"></i>
+            <span>{{ group.label }}</span>
+            <span *ngIf="group.links[0].badgeCount && group.links[0].badgeCount > 0" 
+                  class="badge">
+              {{ group.links[0].badgeCount }}
+            </span>
+          </a>
+
+          <!-- Groupe avec plusieurs liens sur mobile -->
+          <div *ngIf="group.links.length > 1"
+               class="mobile-nav-dropdown-parent"
+               [class.open]="isGroupOpen(group.label)">
+            
+            <button class="mobile-nav-link"
+                    (click)="toggleGroup(group.label, $event)">
+              <div class="nav-link-content">
+                <i [class]="group.icon"></i>
+                <span>{{ group.label }}</span>
+              </div>
+              <div class="nav-link-indicators">
+                <span *ngIf="getGroupBadgeCount(group) > 0" class="badge">
+                  {{ getGroupBadgeCount(group) }}
+                </span>
+                <i class="fas fa-chevron-down dropdown-arrow" 
+                   [class.rotated]="isGroupOpen(group.label)"></i>
+              </div>
+            </button>
+
+            <div class="mobile-nav-submenu">
+              <a *ngFor="let link of group.links"
+                 [routerLink]="link.path"
+                 routerLinkActive="active"
+                 [routerLinkActiveOptions]="{exact: false}"
+                 class="sub-link"
+                 (click)="mobileMenuOpen = false; openGroups.clear()">
+                <i [class]="link.icon"></i>
+                <span>{{ link.label }}</span>
+                <span *ngIf="link.badgeCount && link.badgeCount > 0" class="badge">
+                  {{ link.badgeCount }}
+                </span>
+              </a>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="mobile-menu-footer">
+        <button (click)="goToProfil(); mobileMenuOpen = false" class="mobile-menu-item">
+          <i class="fas fa-user-circle"></i>
+          <span>Mon profil</span>
+        </button>
+        <button (click)="logout()" class="mobile-menu-item logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Déconnexion</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>

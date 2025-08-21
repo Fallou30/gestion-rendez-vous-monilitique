@@ -1,0 +1,18 @@
+/* hopital-services.component.css */
+.card {
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table-responsive {
+  margin-top: 20px;
+}
+
+.badge {
+  font-size: 0.9em;
+  padding: 5px 10px;
+}
+
+.fas {
+  margin-right: 5px;
+}

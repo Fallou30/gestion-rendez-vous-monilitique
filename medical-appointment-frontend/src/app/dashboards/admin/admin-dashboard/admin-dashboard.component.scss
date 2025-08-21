@@ -1,0 +1,1014 @@
+// admin-dashboard.component.scss
+
+// Variables
+$primary-color: #3b82f6;
+$secondary-color: #64748b;
+$success-color: #10b981;
+$warning-color: #f59e0b;
+$danger-color: #ef4444;
+$info-color: #06b6d4;
+$purple-color: #8b5cf6;
+
+$bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+$shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+$shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.12);
+$shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+$border-radius: 16px;
+$border-radius-small: 8px;
+$border-radius-tiny: 6px;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin transition-smooth {
+  transition: all 0.2s ease;
+}
+
+@mixin card-style {
+  background: white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-light;
+  @include transition-smooth;
+}
+
+@mixin gradient-icon($color1, $color2) {
+  background: linear-gradient(135deg, $color1, $color2);
+  color: white;
+}
+
+// Layout principal
+.admin-dashboard {
+  min-height: 100vh;
+  background: $bg-gradient;
+  padding: 2rem;
+}
+
+// En-tête
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @include card-style;
+  padding: 2rem;
+}
+
+.header-text {
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    i {
+      color: $primary-color;
+    }
+  }
+
+  p {
+    color: $secondary-color;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+// Boutons
+.btn {
+  padding: 12px 24px;
+  border-radius: $border-radius-small;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  @include transition-smooth;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+
+  &-primary {
+    background: $primary-color;
+    color: white;
+
+    &:hover {
+      background: #2563eb;
+      transform: translateY(-2px);
+    }
+  }
+
+  &-secondary {
+    background: #f1f5f9;
+    color: $secondary-color;
+
+    &:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+  }
+
+  &-link {
+    color: $primary-color;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 8px 16px;
+    border-radius: $border-radius-tiny;
+    @include transition-smooth;
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    &.urgent {
+      color: $danger-color;
+      background: #fef2f2;
+
+      &:hover {
+        background: #fee2e2;
+      }
+    }
+  }
+
+  &-text {
+    color: $primary-color;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    @include transition-smooth;
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+      background: #eff6ff;
+    }
+  }
+}
+
+// Grille de statistiques
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  @include card-style;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-left: 4px solid transparent;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-medium;
+  }
+
+  &.patients {
+    border-left-color: $primary-color;
+    
+    .stat-icon {
+      @include gradient-icon($primary-color, #1d4ed8);
+    }
+  }
+
+  &.medecins {
+    border-left-color: $success-color;
+    
+    .stat-icon {
+      @include gradient-icon($success-color, #059669);
+    }
+  }
+
+  &.rendezvous {
+    border-left-color: $warning-color;
+    
+    .stat-icon {
+      @include gradient-icon($warning-color, #d97706);
+    }
+  }
+
+  &.validations {
+    border-left-color: $danger-color;
+    
+    .stat-icon {
+      @include gradient-icon($danger-color, #dc2626);
+    }
+  }
+
+  &.receptionnistes {
+    border-left-color: $purple-color;
+    
+    .stat-icon {
+      @include gradient-icon($purple-color, #7c3aed);
+    }
+  }
+
+  &.revenus {
+    border-left-color: $info-color;
+    
+    .stat-icon {
+      @include gradient-icon($info-color, #0891b2);
+    }
+  }
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  @include flex-center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  color: $secondary-color;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-change {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  &.positive {
+    color: $success-color;
+  }
+
+  &.negative {
+    color: $danger-color;
+  }
+
+  &.neutral {
+    color: $warning-color;
+  }
+
+  &.warning {
+    color: $danger-color;
+  }
+}
+
+.stat-action {
+  align-self: flex-end;
+}
+
+// Contenu principal
+.main-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.section-card {
+  @include card-style;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  &.urgent {
+    border-left: 4px solid $danger-color;
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f1f5f9;
+
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.badge-urgent {
+  background: $danger-color;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+// Actions rapides
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.quick-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  text-decoration: none;
+  color: inherit;
+  @include transition-smooth;
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    background: #f1f5f9;
+    transform: translateY(-2px);
+    box-shadow: $shadow-hover;
+  }
+
+  &.urgent {
+    background: #fef2f2;
+    border-color: #fecaca;
+
+    &:hover {
+      background: #fee2e2;
+    }
+  }
+
+  &.patients .action-icon {
+    @include gradient-icon($primary-color, #1d4ed8);
+  }
+
+  &.medecins .action-icon {
+    @include gradient-icon($success-color, #059669);
+  }
+
+  &.rendezvous .action-icon {
+    @include gradient-icon($warning-color, #d97706);
+  }
+
+  &.validations .action-icon {
+    @include gradient-icon($danger-color, #dc2626);
+  }
+
+  &.rapports .action-icon {
+    @include gradient-icon($purple-color, #7c3aed);
+  }
+
+  &.sauvegarde .action-icon {
+    @include gradient-icon($info-color, #0891b2);
+  }
+}
+
+.action-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  @include flex-center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.action-text {
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 0.25rem 0;
+  }
+
+  p {
+    color: $secondary-color;
+    font-size: 0.875rem;
+    margin: 0;
+  }
+}
+
+.action-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: $danger-color;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+// Graphiques
+.chart-container {
+  height: 200px;
+  @include flex-center;
+  background: #f8fafc;
+  border-radius: $border-radius-small;
+  margin-top: 1rem;
+}
+
+.select-period {
+  padding: 6px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: $border-radius-tiny;
+  font-size: 0.875rem;
+  background: white;
+  cursor: pointer;
+}
+
+// Validations
+.validation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.validation-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: $border-radius-small;
+  border: 1px solid #e2e8f0;
+}
+
+.validation-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  @include gradient-icon($primary-color, #1d4ed8);
+  @include flex-center;
+  flex-shrink: 0;
+}
+
+.validation-content {
+  flex: 1;
+
+  h4 {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  p {
+    margin: 0 0 0.25rem 0;
+    color: $secondary-color;
+    font-size: 0.875rem;
+  }
+}
+
+.validation-date {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.validation-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-validate,
+.btn-reject {
+  width: 32px;
+  height: 32px;
+  border-radius: $border-radius-tiny;
+  border: none;
+  @include flex-center;
+  cursor: pointer;
+  @include transition-smooth;
+}
+
+.btn-validate {
+  background: #dcfce7;
+  color: #16a34a;
+
+  &:hover {
+    background: #bbf7d0;
+  }
+}
+
+.btn-reject {
+  background: #fee2e2;
+  color: #dc2626;
+
+  &:hover {
+    background: #fecaca;
+  }
+}
+
+// Timeline des activités
+.activity-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activity-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: $border-radius-small;
+  @include transition-smooth;
+
+  &:hover {
+    background: #f8fafc;
+  }
+}
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  @include flex-center;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+
+  &.success {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+
+  &.warning {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  &.info {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+}
+
+.activity-content {
+  h4 {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.875rem;
+  }
+
+  p {
+    margin: 0 0 0.5rem 0;
+    color: $secondary-color;
+    font-size: 0.8rem;
+  }
+}
+
+.activity-time {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+// Rendez-vous
+.appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.appointment-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: $border-radius-small;
+  border: 1px solid #e2e8f0;
+}
+
+.appointment-time {
+  text-align: center;
+  flex-shrink: 0;
+
+  .time {
+    display: block;
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.9rem;
+  }
+
+  .date {
+    display: block;
+    color: $secondary-color;
+    font-size: 0.75rem;
+  }
+}
+
+.appointment-content {
+  flex: 1;
+
+  h4 {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.875rem;
+  }
+
+  p {
+    margin: 0 0 0.25rem 0;
+    color: $secondary-color;
+    font-size: 0.8rem;
+  }
+}
+
+.appointment-type {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.appointment-status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+
+  &.confirme {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+
+  &.attente {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  &.annule {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+}
+
+.section-footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-dashboard {
+    padding: 1rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .stat-icon {
+    margin-bottom: 0.5rem;
+  }
+  
+  .validation-item,
+  .appointment-item {
+    flex-wrap: wrap;
+  }
+  
+  .validation-actions,
+  .appointment-status {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+    
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .quick-action-btn {
+    flex-direction: column;
+    text-align: center;
+    
+    .action-icon {
+      margin-bottom: 0.5rem;
+    }
+  }
+  
+  .activity-item,
+  .validation-item {
+    padding: 0.75rem;
+  }
+  // Styles pour les nouvelles cartes statistiques
+.stat-card {
+  &.hopitaux {
+    .stat-icon {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      
+      i {
+        font-size: 1.8rem;
+      }
+    }
+    
+    .stat-number {
+      color: #667eea;
+      font-weight: 700;
+    }
+    
+    .stat-change.positive {
+      color: #667eea;
+    }
+    
+    &:hover {
+      border-left: 4px solid #667eea;
+      transform: translateY(-2px);
+    }
+  }
+  
+  &.services {
+    .stat-icon {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      
+      i {
+        font-size: 1.8rem;
+      }
+    }
+    
+    .stat-number {
+      color: #f5576c;
+      font-weight: 700;
+    }
+    
+    .stat-change.positive {
+      color: #f5576c;
+    }
+    
+    &:hover {
+      border-left: 4px solid #f5576c;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// Styles pour les boutons d'actions rapides
+.quick-action-btn {
+  &.hopitaux {
+    background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+    border: 1px solid #667eea20;
+    
+    .action-icon {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .action-text h3 {
+      color: #667eea;
+    }
+    
+    &:hover {
+      background: linear-gradient(135deg, #667eea25 0%, #764ba225 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+  }
+  
+  &.services {
+    background: linear-gradient(135deg, #f093fb15 0%, #f5576c15 100%);
+    border: 1px solid #f5576c20;
+    
+    .action-icon {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+    }
+    
+    .action-text h3 {
+      color: #f5576c;
+    }
+    
+    &:hover {
+      background: linear-gradient(135deg, #f093fb25 0%, #f5576c25 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(245, 87, 108, 0.15);
+    }
+  }
+}
+
+// Styles pour la nouvelle section infrastructure
+.infrastructure-summary {
+  padding: 1rem 0;
+  
+  .infrastructure-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &:hover {
+      background-color: #f8f9fa;
+      padding-left: 0.5rem;
+      border-radius: 8px;
+    }
+    
+    .infrastructure-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      
+      i {
+        font-size: 1.5rem;
+        color: white;
+      }
+      
+      &.hopitaux {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      
+      &.services {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+      
+      &.creneaux {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      }
+    }
+    
+    .infrastructure-details {
+      flex: 1;
+      
+      h4 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 0 0.25rem 0;
+        color: #2c3e50;
+      }
+      
+      p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 0.9rem;
+      }
+    }
+    
+    .btn-link-small {
+      background: none;
+      border: 1px solid #e9ecef;
+      color: #6c757d;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      
+      &:hover {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+      }
+    }
+  }
+}
+
+// Amélioration de la grille des statistiques pour accommoder les nouvelles cartes
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  
+  @media (min-width: 1400px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  @media (min-width: 768px) and (max-width: 1399px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Animation d'entrée pour les nouvelles cartes
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-card.hopitaux,
+.stat-card.services {
+  animation: fadeInUp 0.6s ease-out;
+  animation-fill-mode: both;
+  
+  &.hopitaux {
+    animation-delay: 0.1s;
+  }
+  
+  &.services {
+    animation-delay: 0.2s;
+  }
+}
+
+// Style responsive pour les actions rapides
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  @media (min-width: 768px) and (max-width: 1199px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// Style pour les badges de nombre dans les actions rapides
+.action-text p {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin: 0;
+  
+  .stat-number {
+    font-weight: 600;
+    color: inherit;
+  }
+}
+}
